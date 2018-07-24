@@ -3,12 +3,13 @@ package model
 import (
 	"github.com/buger/jsonparser"
 	"strconv"
+	"strings"
 	"time"
 )
 
-type scFloat float64
+type ScFloat float64
 
-func (f *scFloat) UnmarshalJSON(b []byte) error {
+func (f *ScFloat) UnmarshalJSON(b []byte) error {
 	var raw, err = jsonparser.GetString(b)
 	if err != nil {
 		return err
@@ -21,28 +22,28 @@ func (f *scFloat) UnmarshalJSON(b []byte) error {
 	if w, err := strconv.ParseFloat(raw, 64); err != nil {
 		return err
 	} else {
-		*f = scFloat(w)
+		*f = ScFloat(w)
 	}
 
 	return nil
 }
 
-type scBool bool
+type ScBool bool
 
-func (t *scBool) UnmarshalJSON(b []byte) error {
+func (t *ScBool) UnmarshalJSON(b []byte) error {
 	var raw, err = jsonparser.GetString(b)
 	if err != nil {
 		return err
 	}
 
-	*t = scBool("1" == raw)
+	*t = ScBool("1" == raw)
 
 	return nil
 }
 
-type scInt int
+type ScInt int
 
-func (i *scInt) UnmarshalJSON(b []byte) error {
+func (i *ScInt) UnmarshalJSON(b []byte) error {
 	var raw, err = jsonparser.GetString(b)
 	if err != nil {
 		return err
@@ -55,15 +56,15 @@ func (i *scInt) UnmarshalJSON(b []byte) error {
 	if w, err := strconv.Atoi(raw); err != nil {
 		return err
 	} else {
-		*i = scInt(w)
+		*i = ScInt(w)
 	}
 
 	return nil
 }
 
-type scTimestamp time.Time
+type ScTimestamp time.Time
 
-func (t *scTimestamp) UnmarshalJSON(b []byte) error {
+func (t *ScTimestamp) UnmarshalJSON(b []byte) error {
 	var raw, err = jsonparser.GetString(b)
 	if err != nil {
 		return err
@@ -76,8 +77,25 @@ func (t *scTimestamp) UnmarshalJSON(b []byte) error {
 	if w, err := time.Parse(scTimeFormat, string(raw)); err != nil {
 		return err
 	} else {
-		*t = scTimestamp(w)
+		*t = ScTimestamp(w)
 	}
+
+	return nil
+}
+
+type ScStringSlice []string
+
+func (s *ScStringSlice) UnmarshalJSON(b []byte) error {
+	var raw, err = jsonparser.GetString(b)
+	if err != nil {
+		return err
+	}
+
+	if len(raw) == 0 {
+		return nil
+	}
+
+	*s = ScStringSlice(strings.Split(raw, ","))
 
 	return nil
 }

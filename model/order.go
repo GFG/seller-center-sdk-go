@@ -1,5 +1,11 @@
 package model
 
+import (
+	"encoding/json"
+	"errors"
+	"github.com/buger/jsonparser"
+)
+
 type DeliveryType string
 type DocumentType string
 
@@ -19,11 +25,68 @@ const (
 )
 
 type Orders struct {
-	Orders []Order `json:"Order"`
+	Orders []Order `json:"Orders"`
 }
 
-type Status struct {
-	Status string `json:"Status"`
+func (o *Orders) UnmarshalJSON(b []byte) error {
+	rawOrders, dataType, _, err := jsonparser.Get(b, "Orders", "Order")
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
+		return err
+	}
+
+	if len(rawOrders) == 0 || dataType == jsonparser.NotExist {
+		return errors.New("cannot find order")
+	}
+
+	var orders []Order
+	switch dataType {
+	case jsonparser.Array:
+		if err := json.Unmarshal(rawOrders, &orders); nil != err {
+			return err
+		}
+	case jsonparser.Object:
+		var order Order
+		if err := json.Unmarshal(rawOrders, &order); nil != err {
+			return err
+		}
+
+		orders = []Order{order}
+	}
+
+	*o = Orders{orders}
+
+	return nil
+}
+
+type Status []string
+
+func (s *Status) UnmarshalJSON(b []byte) error {
+	if len(b) == 0 {
+		return nil
+	}
+
+	raw, dataType, _, err := jsonparser.Get(b, "Status")
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
+		return err
+	}
+
+	if len(raw) == 0 || dataType == jsonparser.NotExist {
+		return nil
+	}
+
+	var status []string
+	switch dataType {
+	case jsonparser.Array:
+		if err := json.Unmarshal(raw, &status); nil != err {
+			return err
+		}
+	case jsonparser.String:
+		status = Status{string(raw)}
+	}
+
+	*s = status
+
+	return nil
 }
 
 type Address struct {
@@ -44,68 +107,98 @@ type Address struct {
 }
 
 type Order struct {
-	OrderId                    scInt       `json:"OrderId"`
+	OrderId                    ScInt       `json:"OrderId"`
 	CustomerFirstName          string      `json:"CustomerFirstName"`
 	CustomerLastName           string      `json:"CustomerLastName"`
 	OrderNumber                string      `json:"OrderNumber"`
 	PaymentMethod              string      `json:"PaymentMethod"`
 	Remarks                    string      `json:"Remarks"`
 	DeliveryInfo               string      `json:"DeliveryInfo"`
-	Price                      scFloat     `json:"Price"`
-	GiftOption                 scBool      `json:"GiftOption"`
+	Price                      ScFloat     `json:"Price"`
+	GiftOption                 ScBool      `json:"GiftOption"`
 	GiftMessage                string      `json:"GiftMessage"`
 	VoucherCode                string      `json:"VoucherCode"`
-	CreatedAt                  scTimestamp `json:"CreatedAt"`
-	UpdatedAt                  scTimestamp `json:"UpdatedAt"`
+	CreatedAt                  ScTimestamp `json:"CreatedAt"`
+	UpdatedAt                  ScTimestamp `json:"UpdatedAt"`
 	AddressBilling             Address     `json:"AddressBilling"`
 	AddressShipping            Address     `json:"AddressShipping"`
 	NationalRegistrationNumber string      `json:"NationalRegistrationNumber"`
-	ItemsCount                 scInt       `json:"ItemsCount"`
-	PromisedShippingTime       scTimestamp `json:"PromisedShippingTime"`
+	ItemsCount                 ScInt       `json:"ItemsCount"`
+	PromisedShippingTime       ScTimestamp `json:"PromisedShippingTime"`
 	ExtraAttributes            string      `json:"ExtraAttributes"`
 	Statuses                   Status      `json:"Statuses"`
 }
 
 type OrderItems struct {
-	OrderItems []OrderItem `json:"OrderItem"`
+	OrderItems []OrderItem `json:"OrderItems"`
+}
+
+func (oi *OrderItems) UnmarshalJSON(b []byte) error {
+	rawOrderItems, dataType, _, err := jsonparser.Get(b, "OrderItems", "OrderItem")
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
+		return err
+	}
+
+	if len(rawOrderItems) == 0 || dataType == jsonparser.NotExist {
+		return errors.New("cannot find order items")
+	}
+
+	var orderItems []OrderItem
+	switch dataType {
+	case jsonparser.Array:
+		if err := json.Unmarshal(rawOrderItems, &orderItems); nil != err {
+			return err
+		}
+	case jsonparser.Object:
+		var orderItem OrderItem
+		if err := json.Unmarshal(rawOrderItems, &orderItem); nil != err {
+			return err
+		}
+
+		orderItems = []OrderItem{orderItem}
+	}
+
+	*oi = OrderItems{orderItems}
+
+	return nil
 }
 
 type OrderItem struct {
-	OrderItemId          scInt       `json:"OrderItemId"`
+	OrderItemId          ScInt       `json:"OrderItemId"`
 	ShopId               string      `json:"ShopId"`
-	OrderId              scInt       `json:"OrderId"`
+	OrderId              ScInt       `json:"OrderId"`
 	Name                 string      `json:"Name"`
 	Sku                  string      `json:"Sku"`
 	Variation            string      `json:"Variation"`
 	ShopSku              string      `json:"ShopSku"`
 	ShippingType         string      `json:"ShippingType"`
-	ItemPrice            scFloat     `json:"ItemPrice"`
-	PaidPrice            scFloat     `json:"PaidPrice"`
+	ItemPrice            ScFloat     `json:"ItemPrice"`
+	PaidPrice            ScFloat     `json:"PaidPrice"`
 	Currency             string      `json:"Currency"`
-	WalletCredits        scFloat     `json:"WalletCredits"`
-	TaxAmount            scFloat     `json:"TaxAmount"`
-	CodCollectableAmount scFloat     `json:"CodCollectableAmount"`
-	ShippingAmount       scFloat     `json:"ShippingAmount"`
-	ShippingServiceCost  scFloat     `json:"ShippingServiceCost"`
-	VoucherAmount        scFloat     `json:"VoucherAmount"`
+	WalletCredits        ScFloat     `json:"WalletCredits"`
+	TaxAmount            ScFloat     `json:"TaxAmount"`
+	CodCollectableAmount ScFloat     `json:"CodCollectableAmount"`
+	ShippingAmount       ScFloat     `json:"ShippingAmount"`
+	ShippingServiceCost  ScFloat     `json:"ShippingServiceCost"`
+	VoucherAmount        ScFloat     `json:"VoucherAmount"`
 	VoucherCode          string      `json:"VoucherCode"`
 	Status               string      `json:"Status"`
-	IsProcessable        scBool      `json:"IsProcessable"`
+	IsProcessable        ScBool      `json:"IsProcessable"`
 	ShipmentProvider     string      `json:"ShipmentProvider"`
-	IsDigital            scBool      `json:"IsDigital"`
+	IsDigital            ScBool      `json:"IsDigital"`
 	DigitalDeliveryInfo  string      `json:"DigitalDeliveryInfo"`
 	TrackingCode         string      `json:"TrackingCode"`
 	TrackingCodePre      string      `json:"TrackingCodePre"`
 	Reason               string      `json:"Reason"`
 	ReasonDetail         string      `json:"ReasonDetail"`
-	PurchaseOrderId      scInt       `json:"PurchaseOrderId"`
+	PurchaseOrderId      ScInt       `json:"PurchaseOrderId"`
 	PurchaseOrderNumber  string      `json:"PurchaseOrderNumber"`
 	PackageId            string      `json:"PackageId"`
-	PromisedShippingTime scTimestamp `json:"PromisedShippingTime"`
+	PromisedShippingTime ScTimestamp `json:"PromisedShippingTime"`
 	ExtraAttributes      string      `json:"ExtraAttributes"`
 	ShippingProviderType string      `json:"ShippingProviderType"`
-	CreatedAt            scTimestamp `json:"CreatedAt"`
-	UpdatedAt            scTimestamp `json:"UpdatedAt"`
+	CreatedAt            ScTimestamp `json:"CreatedAt"`
+	UpdatedAt            ScTimestamp `json:"UpdatedAt"`
 	ReturnStatus         string      `json:"ReturnStatus"`
 }
 

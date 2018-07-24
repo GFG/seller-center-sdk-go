@@ -1,68 +1,71 @@
-package endpoint
+package resource
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/GFG/seller-center-sdk-go/client"
 	"github.com/GFG/seller-center-sdk-go/model"
 	"github.com/buger/jsonparser"
-	"github.com/pkg/errors"
 	"strconv"
 	"strings"
 	"time"
 )
 
-type OrderEndpoint struct {
+type OrderResource struct {
 	client client.Client
 }
 
-func NewOrder(client client.Client) OrderEndpoint {
-	return OrderEndpoint{client: client}
+type GetOrdersParams struct {
+	CreatedAfter  *time.Time
+	CreatedBefore *time.Time
+	UpdatedAfter  *time.Time
+	UpdatedBefore *time.Time
+	Status        *string
+	Limit         *int
+	Offset        *int
+	SortBy        *string
+	SortDirection *string
 }
 
-func (oe OrderEndpoint) GetOrders(
-	createdAfter *time.Time,
-	createdBefore *time.Time,
-	updatedAfter *time.Time,
-	updatedBefore *time.Time,
-	status *string,
-	limit *int,
-	offset *int,
-	sortBy *string,
-	sortDirection *string) (model.Orders, error) {
+func NewOrder(client client.Client) OrderResource {
+	return OrderResource{client: client}
+}
+
+func (or OrderResource) GetOrders(params GetOrdersParams) (model.Orders, error) {
 
 	r := client.NewGenericRequest("GetOrders", client.MethodGET)
 	r.SetVersion(client.V1)
 
-	if nil != createdAfter {
-		r.SetRequestParam("CreatedAfter", createdAfter.Format(time.RFC3339))
+	if nil != params.CreatedAfter {
+		r.SetRequestParam("CreatedAfter", params.CreatedAfter.Format(time.RFC3339))
 	}
-	if nil != createdBefore {
-		r.SetRequestParam("CreatedBefore", createdBefore.Format(time.RFC3339))
+	if nil != params.CreatedBefore {
+		r.SetRequestParam("CreatedBefore", params.CreatedBefore.Format(time.RFC3339))
 	}
-	if nil != updatedAfter {
-		r.SetRequestParam("UpdatedAfter", updatedAfter.Format(time.RFC3339))
+	if nil != params.UpdatedAfter {
+		r.SetRequestParam("UpdatedAfter", params.UpdatedAfter.Format(time.RFC3339))
 	}
-	if nil != updatedBefore {
-		r.SetRequestParam("UpdatedBefore", updatedBefore.Format(time.RFC3339))
+	if nil != params.UpdatedBefore {
+		r.SetRequestParam("UpdatedBefore", params.UpdatedBefore.Format(time.RFC3339))
 	}
-	if nil != limit {
-		r.SetRequestParam("Limit", strconv.Itoa(*limit))
+	if nil != params.Limit {
+		r.SetRequestParam("Limit", strconv.Itoa(*params.Limit))
 	}
-	if nil != offset {
-		r.SetRequestParam("Offset", strconv.Itoa(*offset))
+	if nil != params.Offset {
+		r.SetRequestParam("Offset", strconv.Itoa(*params.Offset))
 	}
-	if nil != status {
-		r.SetRequestParam("Status", *status)
+	if nil != params.Status {
+		r.SetRequestParam("Status", *params.Status)
 	}
-	if nil != sortBy {
-		r.SetRequestParam("SortBy", *sortBy)
+	if nil != params.SortBy {
+		r.SetRequestParam("SortBy", *params.SortBy)
 	}
-	if nil != sortDirection {
-		r.SetRequestParam("SortDirection", *sortDirection)
+	if nil != params.SortDirection {
+		r.SetRequestParam("SortDirection", *params.SortDirection)
 	}
 
-	response, err := oe.client.Call(r)
+	response, err := or.client.Call(r)
 
 	if err != nil {
 		return model.Orders{}, err
@@ -75,29 +78,20 @@ func (oe OrderEndpoint) GetOrders(
 	}
 
 	rawBody := response.GetBody()
-	rawOrders, _, _, err := jsonparser.Get(rawBody, "Orders")
 
-	if err != nil {
-		return model.Orders{}, err
-	}
-
-	orders := model.Orders{}
-	if len(rawOrders) == 0 {
-		return orders, nil
-	}
-
-	err = json.Unmarshal(rawOrders, &orders)
+	var orders model.Orders
+	err = json.Unmarshal(rawBody, &orders)
 
 	return orders, err
 }
 
-func (oe OrderEndpoint) GetOrder(orderId int) (model.Order, error) {
+func (or OrderResource) GetOrder(orderId int) (model.Order, error) {
 	r := client.NewGenericRequest("GetOrder", client.MethodGET)
 	r.SetVersion(client.V1)
 
 	r.SetRequestParam("OrderId", strconv.Itoa(orderId))
 
-	response, err := oe.client.Call(r)
+	response, err := or.client.Call(r)
 
 	if err != nil {
 		return model.Order{}, err
@@ -110,35 +104,25 @@ func (oe OrderEndpoint) GetOrder(orderId int) (model.Order, error) {
 	}
 
 	rawBody := response.GetBody()
-	rawOrders, _, _, err := jsonparser.Get(rawBody, "Orders")
-
-	if err != nil {
+	var orders model.Orders
+	if err := json.Unmarshal(rawBody, &orders); nil != err {
 		return model.Order{}, err
 	}
 
-	rawOrder, _, _, err := jsonparser.Get(rawOrders, "Order")
-
-	if err != nil {
-		return model.Order{}, err
+	if len(orders.Orders) == 1 {
+		return orders.Orders[0], nil
 	}
 
-	order := model.Order{}
-	if len(rawOrder) == 0 {
-		return model.Order{}, nil
-	}
-
-	err = json.Unmarshal(rawOrder, &order)
-
-	return model.Order{}, err
+	return model.Order{}, errors.New("cannot find order")
 }
 
-func (oe OrderEndpoint) GetOrderItems(orderId int) (model.OrderItems, error) {
+func (or OrderResource) GetOrderItems(orderId int) (model.OrderItems, error) {
 	r := client.NewGenericRequest("GetOrderItems", client.MethodGET)
 	r.SetVersion(client.V1)
 
 	r.SetRequestParam("OrderId", strconv.Itoa(orderId))
 
-	response, err := oe.client.Call(r)
+	response, err := or.client.Call(r)
 
 	if err != nil {
 		return model.OrderItems{}, err
@@ -151,30 +135,23 @@ func (oe OrderEndpoint) GetOrderItems(orderId int) (model.OrderItems, error) {
 	}
 
 	rawBody := response.GetBody()
-	rawOrderItems, _, _, err := jsonparser.Get(rawBody, "OrderItems")
-
+	var orderItems model.OrderItems
+	err = json.Unmarshal(rawBody, &orderItems)
 	if err != nil {
 		return model.OrderItems{}, err
 	}
 
-	orderItems := model.OrderItems{}
-	if len(rawOrderItems) == 0 {
-		return orderItems, nil
-	}
-
-	err = json.Unmarshal(rawOrderItems, &orderItems)
-
-	return orderItems, err
+	return orderItems, nil
 }
 
-func (oe OrderEndpoint) GetDocument(orderItemIds []int, documentType model.DocumentType) (model.Document, error) {
+func (or OrderResource) GetDocument(orderItemIds []int, documentType model.DocumentType) (model.Document, error) {
 	r := client.NewGenericRequest("GetDocument", client.MethodGET)
 	r.SetVersion(client.V1)
 
 	r.SetRequestParam("OrderItemIds", intSliceToParam(orderItemIds))
 	r.SetRequestParam("DocumentType", string(documentType))
 
-	response, err := oe.client.Call(r)
+	response, err := or.client.Call(r)
 
 	if err != nil {
 		return model.Document{}, err
@@ -187,29 +164,26 @@ func (oe OrderEndpoint) GetDocument(orderItemIds []int, documentType model.Docum
 	}
 
 	rawBody := response.GetBody()
-	rawDocuments, _, _, err := jsonparser.Get(rawBody, "Documents")
+	rawDocument, dataType, _, err := jsonparser.Get(rawBody, "Documents", "Document")
 
-	if err != nil {
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
 		return model.Document{}, err
 	}
 
-	rawDocument, _, _, err := jsonparser.Get(rawDocuments, "Document")
-
-	if err != nil {
-		return model.Document{}, err
+	if len(rawDocument) == 0 || dataType == jsonparser.NotExist {
+		return model.Document{}, errors.New("cannot find document")
 	}
 
 	document := model.Document{}
-	if len(rawDocument) == 0 {
-		return model.Document{}, nil
+	err = json.Unmarshal(rawDocument, &document)
+	if err != nil {
+		return model.Document{}, err
 	}
 
-	err = json.Unmarshal(rawDocument, &document)
-
-	return document, err
+	return document, nil
 }
 
-func (oe OrderEndpoint) SetStatusToCanceled(orderItemId int, reason string, reasonDetail string) (bool, error) {
+func (or OrderResource) SetStatusToCanceled(orderItemId int, reason string, reasonDetail string) (bool, error) {
 	r := client.NewGenericRequest("SetStatusToCanceled", client.MethodPOST)
 	r.SetVersion(client.V1)
 
@@ -217,7 +191,7 @@ func (oe OrderEndpoint) SetStatusToCanceled(orderItemId int, reason string, reas
 	r.SetRequestParam("Reason", reason)
 	r.SetRequestParam("ReasonDetail", reasonDetail)
 
-	response, err := oe.client.Call(r)
+	response, err := or.client.Call(r)
 
 	if err != nil {
 		return false, err
@@ -232,7 +206,7 @@ func (oe OrderEndpoint) SetStatusToCanceled(orderItemId int, reason string, reas
 	return true, nil
 }
 
-func (oe OrderEndpoint) SetStatusToPackedByMarketplace(orderItemIds []int, deliveryType model.DeliveryType, shippingProvider string) (bool, error) {
+func (or OrderResource) SetStatusToPackedByMarketplace(orderItemIds []int, deliveryType model.DeliveryType, shippingProvider string) (bool, error) {
 	r := client.NewGenericRequest("SetStatusToPackedByMarketplace", client.MethodPOST)
 	r.SetVersion(client.V1)
 
@@ -240,7 +214,7 @@ func (oe OrderEndpoint) SetStatusToPackedByMarketplace(orderItemIds []int, deliv
 	r.SetRequestParam("DeliveryType", string(deliveryType))
 	r.SetRequestParam("ShippingProvider", shippingProvider)
 
-	response, err := oe.client.Call(r)
+	response, err := or.client.Call(r)
 
 	if err != nil {
 		return false, err
@@ -255,7 +229,7 @@ func (oe OrderEndpoint) SetStatusToPackedByMarketplace(orderItemIds []int, deliv
 	return true, nil
 }
 
-func (oe OrderEndpoint) SetStatusToReadyToShip(orderItemIds []int, deliveryType model.DeliveryType, shippingProvider string, trackingNumber string) (bool, error) {
+func (or OrderResource) SetStatusToReadyToShip(orderItemIds []int, deliveryType model.DeliveryType, shippingProvider string, trackingNumber string) (bool, error) {
 	r := client.NewGenericRequest("SetStatusToReadyToShip", client.MethodPOST)
 	r.SetVersion(client.V1)
 
@@ -264,7 +238,7 @@ func (oe OrderEndpoint) SetStatusToReadyToShip(orderItemIds []int, deliveryType 
 	r.SetRequestParam("ShippingProvider", shippingProvider)
 	r.SetRequestParam("TrackingNumber", trackingNumber)
 
-	response, err := oe.client.Call(r)
+	response, err := or.client.Call(r)
 
 	if err != nil {
 		return false, err

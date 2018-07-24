@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/base64"
 	"github.com/GFG/seller-center-sdk-go/client"
-	"github.com/GFG/seller-center-sdk-go/endpoint"
 	"github.com/GFG/seller-center-sdk-go/model"
+	"github.com/GFG/seller-center-sdk-go/resource"
 	"io/ioutil"
 	"log"
 	"os"
@@ -37,59 +37,53 @@ func main() {
 		logger.Panicln("No client available")
 	}
 
-	orderEndpoint := endpoint.NewOrder(scClient)
+	orderResource := resource.NewOrder(scClient)
 
 	createdAfter := time.Date(2014, 2, 25, 0, 0, 0, 0, time.UTC)
-	var createdBefore *time.Time
-	createdBefore = nil
-	var updatedAfter *time.Time
-	updatedAfter = nil
-	var updatedBefore *time.Time
-	updatedBefore = nil
 	status := "shipped"
 	limit := 5
 	offset := 2
 	sortBy := "created_at"
 	sortDirection := "DESC"
 
-	orders, err := orderEndpoint.GetOrders(
-		&createdAfter,
-		createdBefore,
-		updatedAfter,
-		updatedBefore,
-		&status,
-		&limit,
-		&offset,
-		&sortBy,
-		&sortDirection)
+	params := resource.GetOrdersParams{
+		CreatedAfter:  &createdAfter,
+		Status:        &status,
+		Limit:         &limit,
+		Offset:        &offset,
+		SortBy:        &sortBy,
+		SortDirection: &sortDirection,
+	}
+
+	orders, err := orderResource.GetOrders(params)
 
 	if err != nil {
 		logger.Panicln(err)
 	}
 
 	for _, order := range orders.Orders {
-		dumpOder(order, logger)
+		dumpOrder(order, logger)
 	}
 
-	order, err := orderEndpoint.GetOrder(1)
+	order, err := orderResource.GetOrder(1)
 
 	if err != nil {
 		logger.Panicln(err)
 	}
 
-	dumpOder(order, logger)
+	dumpOrder(order, logger)
 
-	orderItems, err := orderEndpoint.GetOrderItems(1)
+	orderItems, err := orderResource.GetOrderItems(1)
 	if err != nil {
 		logger.Panicln(err)
 	}
 
 	for _, orderItem := range orderItems.OrderItems {
-		dumpOderItem(orderItem, logger)
+		dumpOrderItem(orderItem, logger)
 	}
 
 	orderItemIds := []int{1}
-	document, err := orderEndpoint.GetDocument(orderItemIds, model.DocumentTypeShippingLabel)
+	document, err := orderResource.GetDocument(orderItemIds, model.DocumentTypeShippingLabel)
 	if err != nil {
 		logger.Panicln(err)
 	}
@@ -116,14 +110,14 @@ func main() {
 	shippingProivder := "DHL"
 	trackingNumber := "TRACK-0001"
 
-	success, err := orderEndpoint.SetStatusToReadyToShip(orderItemIds, model.DeliveryTypeDropshipping, shippingProivder, trackingNumber)
+	success, err := orderResource.SetStatusToReadyToShip(orderItemIds, model.DeliveryTypeDropshipping, shippingProivder, trackingNumber)
 	if false == success {
 		logger.Printf("SetStatusToReadyToShip failed: %s\n", err)
 	} else {
 		logger.Println("SetStatusToReadyToShip succeeded")
 	}
 
-	success, err = orderEndpoint.SetStatusToPackedByMarketplace(orderItemIds, model.DeliveryTypeDropshipping, shippingProivder)
+	success, err = orderResource.SetStatusToPackedByMarketplace(orderItemIds, model.DeliveryTypeDropshipping, shippingProivder)
 	if false == success {
 		logger.Printf("SetStatusToPackedByMarketplace failed: %s\n", err)
 	} else {
@@ -132,7 +126,7 @@ func main() {
 
 	reason := "Out of Stock"
 	reasonDetail := "No more invetory"
-	success, err = orderEndpoint.SetStatusToCanceled(1, reason, reasonDetail)
+	success, err = orderResource.SetStatusToCanceled(1, reason, reasonDetail)
 	if false == success {
 		logger.Printf("SetStatusToCanceled failed: %s\n", err)
 	} else {
@@ -141,12 +135,14 @@ func main() {
 }
 
 func dumpDocument(document model.Document, logger *log.Logger) {
+	logger.Println("---------")
 	logger.Printf("DocumentType: %s\n", document.DocumentType)
 	logger.Printf("MimeType: %s\n", document.MimeType)
 	logger.Printf("File: %s\n", document.File)
 }
 
-func dumpOderItem(orderItem model.OrderItem, logger *log.Logger) {
+func dumpOrderItem(orderItem model.OrderItem, logger *log.Logger) {
+	logger.Println("---------")
 	logger.Printf("OrderItemId: %d\n", orderItem.OrderItemId)
 	logger.Printf("ShopId: %s\n", orderItem.ShopId)
 	logger.Printf("OrderId: %d\n", orderItem.OrderId)
@@ -185,7 +181,8 @@ func dumpOderItem(orderItem model.OrderItem, logger *log.Logger) {
 	logger.Printf("ReturnStatus: %s\n", orderItem.ReturnStatus)
 }
 
-func dumpOder(order model.Order, logger *log.Logger) {
+func dumpOrder(order model.Order, logger *log.Logger) {
+	logger.Println("---------")
 	logger.Printf("OrderId: %d\n", order.OrderId)
 	logger.Printf("OrderNumber: %s\n", order.OrderNumber)
 	logger.Printf("PaymentMethod: %s\n", order.PaymentMethod)
@@ -229,5 +226,8 @@ func dumpOder(order model.Order, logger *log.Logger) {
 	logger.Printf("ItemsCount: %d\n", order.ItemsCount)
 	logger.Printf("PromisedShippingTime: %s\n", time.Time(order.PromisedShippingTime).Format("2006-01-02 15:04:05"))
 	logger.Printf("ExtraAttributes: %s\n", order.ExtraAttributes)
-	logger.Printf("Status: %s\n", order.Statuses.Status)
+	logger.Println("Statuses:")
+	for _, status := range order.Statuses {
+		logger.Printf("	%s\n", status)
+	}
 }

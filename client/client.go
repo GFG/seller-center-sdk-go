@@ -3,7 +3,7 @@ package client
 import (
 	"bytes"
 	"encoding/xml"
-	"github.com/pkg/errors"
+	"errors"
 	"log"
 	"net/http"
 	"net/mail"
@@ -187,7 +187,7 @@ func (c client) Get(request Request) (Response, error) {
 
 	response, err := c.httpClient.Get(getUrl)
 
-	c.logger.Printf("Sellercenter Client Get call. httpResponseCode: %s, url: %s\n", response.StatusCode, getUrl)
+	c.logger.Printf("Sellercenter Client Get call. httpResponseCode: %d, url: %s\n", response.StatusCode, getUrl)
 
 	if err != nil {
 		return nil, err
@@ -213,7 +213,7 @@ func (c client) Post(request Request) (Response, error) {
 		bytes.NewBuffer(postDataXml),
 	)
 
-	c.logger.Printf("Sellercenter Client Post call. httpResponseCode: %s, url: %s, data: %s\n", response.StatusCode, postUrl, string(postDataXml))
+	c.logger.Printf("Sellercenter Client Post call. httpResponseCode: %d, url: %s, data: %s\n", response.StatusCode, postUrl, string(postDataXml))
 
 	if err != nil {
 		return nil, err

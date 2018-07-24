@@ -2,18 +2,19 @@ package model
 
 import (
 	"encoding/json"
+	"reflect"
 	"testing"
 	"time"
 )
 
-func Test_scFloat_NotEmpty(t *testing.T) {
-	j := []byte("{\"scFloat\": \"12.34\"}")
+func Test_ScFloat_NotEmpty(t *testing.T) {
+	j := []byte("{\"ScFloat\": \"12.34\"}")
 
 	type s struct {
-		ScFloat scFloat `json:"scFloat"`
+		ScFloat ScFloat `json:"ScFloat"`
 	}
 
-	expected := scFloat(12.34)
+	expected := ScFloat(12.34)
 
 	var c s
 	if err := json.Unmarshal(j, &c); nil != err {
@@ -25,14 +26,14 @@ func Test_scFloat_NotEmpty(t *testing.T) {
 	}
 }
 
-func Test_scFloat_Empty(t *testing.T) {
-	j := []byte("{\"scFloat\": \"\"}")
+func Test_ScFloat_Empty(t *testing.T) {
+	j := []byte("{\"ScFloat\": \"\"}")
 
 	type s struct {
-		ScFloat scFloat `json:"scFloat"`
+		ScFloat ScFloat `json:"ScFloat"`
 	}
 
-	expected := scFloat(0.0)
+	expected := ScFloat(0.0)
 
 	var c s
 	if err := json.Unmarshal(j, &c); nil != err {
@@ -44,14 +45,14 @@ func Test_scFloat_Empty(t *testing.T) {
 	}
 }
 
-func Test_scBool_False(t *testing.T) {
-	j := []byte("{\"scBool\": \"0\"}")
+func Test_ScBool_False(t *testing.T) {
+	j := []byte("{\"ScBool\": \"0\"}")
 
 	type s struct {
-		ScBool scBool `json:"scBool"'`
+		ScBool ScBool `json:"ScBool"'`
 	}
 
-	expected := scBool(false)
+	expected := ScBool(false)
 
 	var c s
 	if err := json.Unmarshal(j, &c); nil != err {
@@ -63,14 +64,14 @@ func Test_scBool_False(t *testing.T) {
 	}
 }
 
-func Test_scBool_True(t *testing.T) {
-	j := []byte("{\"scBool\": \"1\"}")
+func Test_ScBool_True(t *testing.T) {
+	j := []byte("{\"ScBool\": \"1\"}")
 
 	type s struct {
-		ScBool scBool `json:"scBool"'`
+		ScBool ScBool `json:"ScBool"'`
 	}
 
-	expected := scBool(true)
+	expected := ScBool(true)
 
 	var c s
 	if err := json.Unmarshal(j, &c); nil != err {
@@ -82,14 +83,14 @@ func Test_scBool_True(t *testing.T) {
 	}
 }
 
-func Test_scInt_NotEmpty(t *testing.T) {
-	j := []byte("{\"scInt\": \"12\"}")
+func Test_ScInt_NotEmpty(t *testing.T) {
+	j := []byte("{\"ScInt\": \"12\"}")
 
 	type s struct {
-		ScInt scInt `json:"scInt"'`
+		ScInt ScInt `json:"ScInt"'`
 	}
 
-	expected := scInt(12)
+	expected := ScInt(12)
 
 	var c s
 	if err := json.Unmarshal(j, &c); nil != err {
@@ -101,14 +102,14 @@ func Test_scInt_NotEmpty(t *testing.T) {
 	}
 }
 
-func Test_scInt_Empty(t *testing.T) {
-	j := []byte("{\"scInt\": \"\"}")
+func Test_ScInt_Empty(t *testing.T) {
+	j := []byte("{\"ScInt\": \"\"}")
 
 	type s struct {
-		ScInt scInt `json:"scInt"'`
+		ScInt ScInt `json:"ScInt"'`
 	}
 
-	expected := scInt(0)
+	expected := ScInt(0)
 
 	var c s
 	if err := json.Unmarshal(j, &c); nil != err {
@@ -120,14 +121,14 @@ func Test_scInt_Empty(t *testing.T) {
 	}
 }
 
-func Test_scTimestamp_NotEmpty(t *testing.T) {
-	j := []byte("{\"scTimestamp\": \"2018-07-10 14:26:20\"}")
+func Test_ScTimestamp_NotEmpty(t *testing.T) {
+	j := []byte("{\"ScTimestamp\": \"2018-07-10 14:26:20\"}")
 
 	type s struct {
-		ScTimestamp scTimestamp `json:"scTimestamp"'`
+		ScTimestamp ScTimestamp `json:"ScTimestamp"'`
 	}
 
-	expected := scTimestamp(time.Date(2018, 7, 10, 14, 26, 20, 0, time.UTC))
+	expected := ScTimestamp(time.Date(2018, 7, 10, 14, 26, 20, 0, time.UTC))
 
 	var c s
 	if err := json.Unmarshal(j, &c); nil != err {
@@ -139,14 +140,14 @@ func Test_scTimestamp_NotEmpty(t *testing.T) {
 	}
 }
 
-func Test_scTimestamp_Empty(t *testing.T) {
-	j := []byte("{\"scTimestamp\": \"\"}")
+func Test_ScTimestamp_Empty(t *testing.T) {
+	j := []byte("{\"ScTimestamp\": \"\"}")
 
 	type s struct {
-		ScTimestamp scTimestamp `json:"scTimestamp"'`
+		ScTimestamp ScTimestamp `json:"ScTimestamp"'`
 	}
 
-	expected := scTimestamp(time.Time{})
+	expected := ScTimestamp(time.Time{})
 
 	var c s
 	if err := json.Unmarshal(j, &c); nil != err {
@@ -155,5 +156,42 @@ func Test_scTimestamp_Empty(t *testing.T) {
 
 	if expected != c.ScTimestamp {
 		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c.ScTimestamp)
+	}
+}
+func Test_ScStringSlice_NotEmpty(t *testing.T) {
+	j := []byte("{\"ScStringSlice\": \"A,B\"}")
+
+	type s struct {
+		ScStringSlice ScStringSlice `json:"ScStringSlice"'`
+	}
+
+	expected := ScStringSlice([]string{"A", "B"})
+
+	var c s
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected: `%v` - error: `%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c.ScStringSlice) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c.ScStringSlice)
+	}
+}
+
+func Test_ScStringSlice_Empty(t *testing.T) {
+	j := []byte("{\"ScStringSlice\": \"\"}")
+
+	type s struct {
+		ScStringSlice ScStringSlice `json:"ScStringSlice"'`
+	}
+
+	expected := ScStringSlice(nil)
+
+	var c s
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected: `%v` - error: `%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c.ScStringSlice) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c.ScStringSlice)
 	}
 }
