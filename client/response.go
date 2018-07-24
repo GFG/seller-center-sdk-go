@@ -21,19 +21,19 @@ type SuccessResponse struct {
 	Body       []byte
 }
 
-func (sr *SuccessResponse) IsError() bool {
+func (sr SuccessResponse) IsError() bool {
 	return false
 }
 
-func (sr *SuccessResponse) GetHeadObject() interface{} {
+func (sr SuccessResponse) GetHeadObject() interface{} {
 	return sr.HeadObject
 }
 
-func (sr *SuccessResponse) GetHead() []byte {
+func (sr SuccessResponse) GetHead() []byte {
 	return sr.Head
 }
 
-func (sr *SuccessResponse) GetBody() []byte {
+func (sr SuccessResponse) GetBody() []byte {
 	return sr.Body
 }
 
@@ -54,19 +54,19 @@ type headErrorResponse struct {
 	ErrorMessage string `json:"ErrorMessage"`
 }
 
-func (*ErrorResponse) IsError() bool {
+func (er ErrorResponse) IsError() bool {
 	return true
 }
 
-func (er *ErrorResponse) GetHeadObject() interface{} {
+func (er ErrorResponse) GetHeadObject() interface{} {
 	return er.HeadObject
 }
 
-func (er *ErrorResponse) GetHead() []byte {
+func (er ErrorResponse) GetHead() []byte {
 	return er.Head
 }
 
-func (er *ErrorResponse) GetBody() []byte {
+func (er ErrorResponse) GetBody() []byte {
 	return nil
 }
 

@@ -69,14 +69,9 @@ func (oe OrderEndpoint) GetOrders(
 	}
 
 	if response.IsError() {
-		rawHead := response.GetHead()
-		errorMessage, err := jsonparser.GetString(rawHead, "ErrorMessage")
+		errorResponse, _ := response.(client.ErrorResponse)
 
-		if err != nil {
-			return model.Orders{}, err
-		}
-
-		return model.Orders{}, errors.New(errorMessage)
+		return model.Orders{}, errors.New(errorResponse.HeadObject.ErrorMessage)
 	}
 
 	rawBody := response.GetBody()
@@ -109,25 +104,9 @@ func (oe OrderEndpoint) GetOrder(orderId int) (model.Order, error) {
 	}
 
 	if response.IsError() {
-		rawHead := response.GetHead()
-		errorMessage, err := jsonparser.GetString(rawHead, "ErrorMessage")
+		errorResponse, _ := response.(client.ErrorResponse)
 
-		if err != nil {
-			return model.Order{}, err
-		}
-
-		return model.Order{}, errors.New(errorMessage)
-	}
-
-	if response.IsError() {
-		rawHead := response.GetHead()
-		errorMessage, err := jsonparser.GetString(rawHead, "ErrorMessage")
-
-		if err != nil {
-			return model.Order{}, err
-		}
-
-		return model.Order{}, errors.New(errorMessage)
+		return model.Order{}, errors.New(errorResponse.HeadObject.ErrorMessage)
 	}
 
 	rawBody := response.GetBody()
@@ -166,14 +145,9 @@ func (oe OrderEndpoint) GetOrderItems(orderId int) (model.OrderItems, error) {
 	}
 
 	if response.IsError() {
-		rawHead := response.GetHead()
-		errorMessage, err := jsonparser.GetString(rawHead, "ErrorMessage")
+		errorResponse, _ := response.(client.ErrorResponse)
 
-		if err != nil {
-			return model.OrderItems{}, err
-		}
-
-		return model.OrderItems{}, errors.New(errorMessage)
+		return model.OrderItems{}, errors.New(errorResponse.HeadObject.ErrorMessage)
 	}
 
 	rawBody := response.GetBody()
@@ -207,14 +181,9 @@ func (oe OrderEndpoint) GetDocument(orderItemIds []int, documentType model.Docum
 	}
 
 	if response.IsError() {
-		rawHead := response.GetHead()
-		errorMessage, err := jsonparser.GetString(rawHead, "ErrorMessage")
+		errorResponse, _ := response.(client.ErrorResponse)
 
-		if err != nil {
-			return model.Document{}, err
-		}
-
-		return model.Document{}, errors.New(errorMessage)
+		return model.Document{}, errors.New(errorResponse.HeadObject.ErrorMessage)
 	}
 
 	rawBody := response.GetBody()
@@ -255,14 +224,9 @@ func (oe OrderEndpoint) SetStatusToCanceled(orderItemId int, reason string, reas
 	}
 
 	if response.IsError() {
-		rawHead := response.GetHead()
-		errorMessage, err := jsonparser.GetString(rawHead, "ErrorMessage")
+		errorResponse, _ := response.(client.ErrorResponse)
 
-		if err != nil {
-			return false, err
-		}
-
-		return false, errors.New(errorMessage)
+		return false, errors.New(errorResponse.HeadObject.ErrorMessage)
 	}
 
 	return true, nil
@@ -283,14 +247,9 @@ func (oe OrderEndpoint) SetStatusToPackedByMarketplace(orderItemIds []int, deliv
 	}
 
 	if response.IsError() {
-		rawHead := response.GetHead()
-		errorMessage, err := jsonparser.GetString(rawHead, "ErrorMessage")
+		errorResponse, _ := response.(client.ErrorResponse)
 
-		if err != nil {
-			return false, err
-		}
-
-		return false, errors.New(errorMessage)
+		return false, errors.New(errorResponse.HeadObject.ErrorMessage)
 	}
 
 	return true, nil
@@ -312,14 +271,9 @@ func (oe OrderEndpoint) SetStatusToReadyToShip(orderItemIds []int, deliveryType 
 	}
 
 	if response.IsError() {
-		rawHead := response.GetHead()
-		errorMessage, err := jsonparser.GetString(rawHead, "ErrorMessage")
+		errorResponse, _ := response.(client.ErrorResponse)
 
-		if err != nil {
-			return false, err
-		}
-
-		return false, errors.New(errorMessage)
+		return false, errors.New(errorResponse.HeadObject.ErrorMessage)
 	}
 
 	return true, nil
