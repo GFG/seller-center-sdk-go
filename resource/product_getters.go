@@ -2,7 +2,6 @@ package resource
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/GFG/seller-center-sdk-go/client"
 	"github.com/GFG/seller-center-sdk-go/model"
@@ -41,7 +40,7 @@ func (pr ProductResource) GetBrands() (model.Brands, error) {
 	if response.IsError() {
 		errorResponse, _ := response.(client.ErrorResponse)
 
-		return model.Brands{}, errors.New(errorResponse.HeadObject.ErrorMessage)
+		return model.Brands{}, newApiResponseError(errorResponse.HeadObject)
 	}
 
 	rawBody := response.GetBody()
@@ -77,7 +76,7 @@ func (pr ProductResource) GetCategoryTree() (model.Categories, error) {
 	if response.IsError() {
 		errorResponse, _ := response.(client.ErrorResponse)
 
-		return model.Categories{}, errors.New(errorResponse.HeadObject.ErrorMessage)
+		return model.Categories{}, newApiResponseError(errorResponse.HeadObject)
 	}
 
 	rawBody := response.GetBody()
@@ -115,7 +114,7 @@ func (pr ProductResource) GetCategoryAttributes(categoryId int) (model.Attribute
 	if response.IsError() {
 		errorResponse, _ := response.(client.ErrorResponse)
 
-		return model.Attributes{}, errors.New(errorResponse.HeadObject.ErrorMessage)
+		return model.Attributes{}, newApiResponseError(errorResponse.HeadObject)
 	}
 
 	rawBody := response.GetBody()
@@ -205,7 +204,7 @@ func (pr ProductResource) GetProducts(params GetProductsParams) (model.Products,
 	if response.IsError() {
 		errorResponse, _ := response.(client.ErrorResponse)
 
-		return model.Products{}, errors.New(errorResponse.HeadObject.ErrorMessage)
+		return model.Products{}, newApiResponseError(errorResponse.HeadObject)
 	}
 
 	rawBody := response.GetBody()

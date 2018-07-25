@@ -3,31 +3,29 @@ package resource
 import (
 	"encoding/json"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"github.com/GFG/seller-center-sdk-go/client"
 	"github.com/GFG/seller-center-sdk-go/model"
 	"github.com/buger/jsonparser"
-	"strconv"
 	"strings"
 	"time"
 )
 
-type warning struct {
+type productWarning struct {
 	Field   string `json:"Field"`
 	Message string `json:"Message"`
 	Value   string `json:"Value"`
 }
 
-func newApiWarningError(w []warning) error {
-	return &ApiWarningError{w}
+func newProductApiWarningError(w []productWarning) error {
+	return &ProductApiWarningError{w}
 }
 
-type ApiWarningError struct {
-	w []warning
+type ProductApiWarningError struct {
+	w []productWarning
 }
 
-func (e *ApiWarningError) Error() string {
+func (e *ProductApiWarningError) Error() string {
 	messages := make([]string, 0, len(e.w))
 	for _, warning := range e.w {
 		messages = append(messages, fmt.Sprintf(`Field "%s": %s (%s)`, warning.Field, warning.Message, warning.Value))
@@ -53,7 +51,7 @@ func (pr ProductResource) ProductImage(sellerSku string, images model.Images) (s
 		return "", err
 	}
 
-	return extractPostReponseReturnValues(response)
+	return extractProductPostResponseReturnValues(response)
 }
 
 func (pr ProductResource) ProductCreate(productBuilders []ProductBuilder) (string, error) {
@@ -76,7 +74,7 @@ func (pr ProductResource) ProductCreate(productBuilders []ProductBuilder) (strin
 		return "", err
 	}
 
-	return extractPostReponseReturnValues(response)
+	return extractProductPostResponseReturnValues(response)
 }
 
 func (pr ProductResource) ProductUpdate(productBuilders []ProductBuilder) (string, error) {
@@ -99,7 +97,7 @@ func (pr ProductResource) ProductUpdate(productBuilders []ProductBuilder) (strin
 		return "", err
 	}
 
-	return extractPostReponseReturnValues(response)
+	return extractProductPostResponseReturnValues(response)
 }
 
 type productImagesEntries struct {
@@ -108,29 +106,29 @@ type productImagesEntries struct {
 }
 
 type productEntry struct {
-	XMLName          xml.Name  `xml:"Product"`
-	SellerSku        *string   `xml:"SellerSku"`
-	Name             *CharData `xml:"Name"`
-	Description      *CharData `xml:"Description"`
-	Brand            *string   `xml:"Brand"`
-	TaxClass         *string   `xml:"TaxClass"`
-	Variation        *string   `xml:"Variation"`
-	ParentSku        *string   `xml:"ParentSku"`
-	Quantity         *int      `xml:"Quantity"`
-	Price            *float64  `xml:"Price"`
-	SalePrice        *float64  `xml:"SalePrice"`
-	SaleStartDate    *saleDate `xml:"SaleStartDate"`
-	SaleEndDate      *saleDate `xml:"SaleEndDate"`
-	Status           *string   `xml:"Status"`
-	ProductId        *string   `xml:"ProductId"`
-	VolumetricWeight *float64  `xml:"VolumetricWeight"`
-	ProductGroup     *string   `xml:"ProductGroup"`
-	MainImage        *string   `xml:"MainImage"`
+	XMLName          xml.Name        `xml:"Product"`
+	SellerSku        *string         `xml:"SellerSku"`
+	Name             *model.CharData `xml:"Name"`
+	Description      *model.CharData `xml:"Description"`
+	Brand            *string         `xml:"Brand"`
+	TaxClass         *string         `xml:"TaxClass"`
+	Variation        *string         `xml:"Variation"`
+	ParentSku        *string         `xml:"ParentSku"`
+	Quantity         *int            `xml:"Quantity"`
+	Price            *float64        `xml:"Price"`
+	SalePrice        *float64        `xml:"SalePrice"`
+	SaleStartDate    *saleDate       `xml:"SaleStartDate"`
+	SaleEndDate      *saleDate       `xml:"SaleEndDate"`
+	Status           *string         `xml:"Status"`
+	ProductId        *string         `xml:"ProductId"`
+	VolumetricWeight *float64        `xml:"VolumetricWeight"`
+	ProductGroup     *string         `xml:"ProductGroup"`
+	MainImage        *string         `xml:"MainImage"`
 	Images           *productImagesEntries
 	PrimaryCategory  *int               `xml:"PrimaryCategory"`
-	Categories       *intSlice          `xml:"Categories"`
+	Categories       *model.IntSlice    `xml:"Categories"`
 	ProductData      *productDataEntity `xml:"ProductData"`
-	BrowseNodes      *intSlice          `xml:"BrowseNodes"`
+	BrowseNodes      *model.IntSlice    `xml:"BrowseNodes"`
 	ShipmentType     *string            `xml:"ShipmentType"`
 	Condition        *string            `xml:"Condition"`
 }
@@ -141,11 +139,11 @@ type productImageXmlBody struct {
 	Images    productImagesEntries
 }
 
-func extractPostReponseReturnValues(response client.Response) (string, error) {
+func extractProductPostResponseReturnValues(response client.Response) (string, error) {
 	if response.IsError() {
 		errorResponse, _ := response.(client.ErrorResponse)
 
-		return "", errors.New(errorResponse.HeadObject.ErrorMessage)
+		return "", newApiResponseError(errorResponse.HeadObject)
 	}
 
 	rawBody := response.GetBody()
@@ -159,48 +157,27 @@ func extractPostReponseReturnValues(response client.Response) (string, error) {
 		return extractRequestId(response)
 	}
 
-	var cache []warning
+	var cache []productWarning
 	switch dataType {
 	case jsonparser.Array:
 		if err := json.Unmarshal(warnings, &cache); nil != err {
 			return "", err
 		}
 	case jsonparser.Object:
-		var w warning
+		var w productWarning
 		if err := json.Unmarshal(warnings, &w); nil != err {
 			return "", err
 		}
 
-		cache = []warning{w}
+		cache = []productWarning{w}
 	}
 
 	if len(cache) == 0 {
 		return extractRequestId(response)
 	}
 
-	return "", newApiWarningError(cache)
+	return "", newProductApiWarningError(cache)
 
-}
-
-func extractRequestId(response client.Response) (string, error) {
-	rawHead := response.GetHead()
-	requestId, err := jsonparser.GetString(rawHead, "RequestId")
-
-	if err != nil {
-		return "", err
-	}
-
-	return requestId, nil
-}
-
-type CharData string
-
-func (cd CharData) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	return e.EncodeElement(struct {
-		S string `xml:",cdata"`
-	}{
-		S: string(cd),
-	}, start)
 }
 
 type productDataEntity map[string]interface{}
@@ -209,7 +186,7 @@ func (pd productDataEntity) MarshalXML(e *xml.Encoder, start xml.StartElement) e
 	tokens := []xml.Token{start}
 	for k, v := range pd {
 		switch v.(type) {
-		case CharData:
+		case model.CharData:
 			v := fmt.Sprintf("[CDATA[%s]]", v)
 			t := xml.StartElement{Name: xml.Name{"", k}}
 			tokens = append(tokens, t, xml.Directive(v), xml.EndElement{t.Name})
@@ -241,25 +218,6 @@ type saleDate time.Time
 func (sd saleDate) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	dateString := time.Time(sd).Format(saleDateTimeFormat)
 	e.EncodeElement(dateString, start)
-
-	return nil
-}
-
-type intSlice []int
-
-func (is intSlice) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	intSliceString := ""
-	if len(is) == 0 {
-		return nil
-	}
-
-	b := make([]string, len(is))
-	for i, v := range is {
-		b[i] = strconv.Itoa(v)
-	}
-
-	intSliceString = strings.Join(b, ",")
-	e.EncodeElement(intSliceString, start)
 
 	return nil
 }

@@ -137,7 +137,7 @@ func main() {
 		WithMainImage("https://sellerapi.sellercenter.net/image1.jpg").
 		WithProductData(
 			map[string]interface{}{
-				"DescriptionEn": resource.CharData(`I am a description for the new product`), // Explicit CDATA encapsulation
+				"DescriptionEn": model.CharData(`I am a description for the new product`), // Explicit CDATA encapsulation
 				"NameEn":        `I am a new product`,
 				"PackageType":   `Parcel`,
 			})
@@ -160,7 +160,7 @@ func main() {
 		WithImage("https://sellerapi.sellercenter.net/image3.jpg").
 		WithProductData(
 			map[string]interface{}{
-				"DescriptionEn": resource.CharData(`I am a description for the new product again`), // Explicit CDATA encapsulation
+				"DescriptionEn": model.CharData(`I am a description for the new product again`), // Explicit CDATA encapsulation
 				"NameEn":        `I am a new product Again`,
 				"PackageType":   `Parcel`,
 			})
@@ -179,7 +179,7 @@ func main() {
 		WithStatus("inactive").
 		WithProductData(
 			map[string]interface{}{
-				"DescriptionEn": resource.CharData(`I am an updated description for the old product`), // Explicit CDATA encapsulation
+				"DescriptionEn": model.CharData(`I am an updated description for the old product`), // Explicit CDATA encapsulation
 			})
 
 	requestId, err = productResource.ProductUpdate(updateProductBuilder)
