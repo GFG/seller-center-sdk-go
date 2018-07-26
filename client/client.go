@@ -187,6 +187,11 @@ func (c client) Get(request Request) (Response, error) {
 
 	response, err := c.httpClient.Get(getUrl)
 
+	if nil == response {
+		c.logger.Printf("Sellercenter Client Get call. empty response, url: %s\n", getUrl)
+		return nil, err
+	}
+
 	c.logger.Printf("Sellercenter Client Get call. httpResponseCode: %d, url: %s\n", response.StatusCode, getUrl)
 
 	if err != nil {
@@ -212,6 +217,11 @@ func (c client) Post(request Request) (Response, error) {
 		"text/xml",
 		bytes.NewBuffer(postDataXml),
 	)
+
+	if nil == response {
+		c.logger.Printf("Sellercenter Client Post call. empty response, url: %s, data: %s\n", postUrl, string(postDataXml))
+		return nil, err
+	}
 
 	c.logger.Printf("Sellercenter Client Post call. httpResponseCode: %d, url: %s, data: %s\n", response.StatusCode, postUrl, string(postDataXml))
 
