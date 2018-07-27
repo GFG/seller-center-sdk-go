@@ -45,11 +45,11 @@ type headSuccessResponse struct {
 }
 
 type ErrorResponse struct {
-	HeadObject headErrorResponse `json:"Head"`
+	HeadObject HeadErrorResponse `json:"Head"`
 	Head       []byte
 }
 
-type headErrorResponse struct {
+type HeadErrorResponse struct {
 	ErrorCode    string `json:"ErrorCode"`
 	ErrorMessage string `json:"ErrorMessage"`
 }

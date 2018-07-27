@@ -120,7 +120,7 @@ func Test_Can_Build_Error_Response(t *testing.T) {
 	}
 
 	errorResponse := ErrorResponse{
-		HeadObject: response.GetHeadObject().(headErrorResponse),
+		HeadObject: response.GetHeadObject().(HeadErrorResponse),
 		Head:       response.GetHead(),
 	}
 

@@ -2,11 +2,8 @@ package resource
 
 import (
 	"github.com/GFG/seller-center-sdk-go/client"
+	"github.com/GFG/seller-center-sdk-go/model"
 	"time"
-)
-
-const (
-	saleDateTimeFormat = "2006-01-02 15:04:05"
 )
 
 type ProductResource struct {
@@ -46,7 +43,7 @@ func (pb *ProductBuilder) WithStatus(status string) *ProductBuilder {
 }
 
 func (pb *ProductBuilder) WithName(name string) *ProductBuilder {
-	cdName := CharData(name)
+	cdName := model.CharData(name)
 	product := pb.product
 	product.Name = &cdName
 	pb.product = product
@@ -71,7 +68,7 @@ func (pb *ProductBuilder) WithPrimaryCategory(primaryCategory int) *ProductBuild
 }
 
 func (pb *ProductBuilder) WithCategories(categories []int) *ProductBuilder {
-	isCategories := intSlice(categories)
+	isCategories := model.IntSlice(categories)
 	product := pb.product
 	product.Categories = &isCategories
 	pb.product = product
@@ -80,7 +77,7 @@ func (pb *ProductBuilder) WithCategories(categories []int) *ProductBuilder {
 }
 
 func (pb *ProductBuilder) WithBrowseNodes(browseNodes []int) *ProductBuilder {
-	isBrowseNodes := intSlice(browseNodes)
+	isBrowseNodes := model.IntSlice(browseNodes)
 	product := pb.product
 	product.BrowseNodes = &isBrowseNodes
 	pb.product = product
@@ -89,7 +86,7 @@ func (pb *ProductBuilder) WithBrowseNodes(browseNodes []int) *ProductBuilder {
 }
 
 func (pb *ProductBuilder) WithDescription(description string) *ProductBuilder {
-	cdDescription := CharData(description)
+	cdDescription := model.CharData(description)
 	product := pb.product
 	product.Description = &cdDescription
 	pb.product = product

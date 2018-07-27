@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/xml"
 	"github.com/buger/jsonparser"
 	"strconv"
 	"strings"
@@ -96,6 +97,35 @@ func (s *ScStringSlice) UnmarshalJSON(b []byte) error {
 	}
 
 	*s = ScStringSlice(strings.Split(raw, ","))
+
+	return nil
+}
+
+type CharData string
+
+func (cd CharData) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	return e.EncodeElement(struct {
+		S string `xml:",cdata"`
+	}{
+		S: string(cd),
+	}, start)
+}
+
+type IntSlice []int
+
+func (is IntSlice) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	intSliceString := ""
+	if len(is) == 0 {
+		return nil
+	}
+
+	b := make([]string, len(is))
+	for i, v := range is {
+		b[i] = strconv.Itoa(v)
+	}
+
+	intSliceString = strings.Join(b, ",")
+	e.EncodeElement(intSliceString, start)
 
 	return nil
 }

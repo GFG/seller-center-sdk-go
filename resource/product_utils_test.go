@@ -3,6 +3,7 @@ package resource
 import (
 	"encoding/xml"
 	"github.com/GFG/seller-center-sdk-go/client"
+	"github.com/GFG/seller-center-sdk-go/model"
 	"io/ioutil"
 	"log"
 	"testing"
@@ -64,7 +65,7 @@ func TestProductBuilder(t *testing.T) {
 		WithProductGroup("product group").
 		WithProductData(
 			map[string]interface{}{
-				"DescriptionEn": CharData(`I am a description for the new product again`), // Explicit CDATA encapsulation
+				"DescriptionEn": model.CharData(`I am a description for the new product again`), // Explicit CDATA encapsulation
 			})
 
 	expected := `<Product><SellerSku>Seller Sku</SellerSku><Name><![CDATA[Name]]></Name><Description><![CDATA[This is a <b>bold</b> product.]]></Description><Brand>Brand</Brand><TaxClass>default</TaxClass><Variation>XXS</Variation><ParentSku>Parent Sku</ParentSku><Quantity>4</Quantity><Price>40</Price><SalePrice>33</SalePrice><SaleStartDate>2015-11-04 10:30:49</SaleStartDate><SaleEndDate>2015-11-09 10:30:49</SaleEndDate><Status>active</Status><ProductId>Product Id</ProductId><VolumetricWeight>10.55</VolumetricWeight><ProductGroup>product group</ProductGroup><MainImage>https://sellerapi.sellercenter.net/image1.jpg</MainImage><Images><Image>https://sellerapi.sellercenter.net/image2.jpg</Image><Image>https://sellerapi.sellercenter.net/image3.jpg</Image></Images><PrimaryCategory>1</PrimaryCategory><Categories>2,3</Categories><ProductData><DescriptionEn><![CDATA[I am a description for the new product again]]></DescriptionEn></ProductData><BrowseNodes>5,6</BrowseNodes><ShipmentType>crossdocking</ShipmentType><Condition>new</Condition></Product>`
