@@ -188,9 +188,7 @@ func (c client) Get(request Request) (Response, error) {
 	}
 
 	for i := 1; i <= maxRetries; i++ {
-		if i > 1 {
-			time.Sleep(time.Duration(i-1) * 200 * time.Millisecond)
-		}
+		time.Sleep(time.Duration(i-1) * 200 * time.Millisecond)
 
 		response, err := c.httpClient.Get(getUrl)
 
@@ -222,9 +220,7 @@ func (c client) Post(request Request) (Response, error) {
 	}
 
 	for i := 1; i <= maxRetries; i++ {
-		if i > 1 {
-			time.Sleep(time.Duration(i-1) * 200 * time.Millisecond)
-		}
+		time.Sleep(time.Duration(i-1) * 200 * time.Millisecond)
 
 		response, err := c.httpClient.Post(
 			postUrl,
