@@ -29,6 +29,8 @@ const V2 = "2.0"
 
 const timeoutInSeconds = 10
 
+const maxRetries = 5
+
 // Errors
 var (
 	NotSupportedMethod = errors.New("unsupported method")
@@ -185,20 +187,25 @@ func (c client) Get(request Request) (Response, error) {
 		return nil, err
 	}
 
-	response, err := c.httpClient.Get(getUrl)
+	for i := 1; i <= maxRetries; i++ {
+		time.Sleep(time.Duration(i-1) * 200 * time.Millisecond)
 
-	if nil == response {
-		c.logger.Printf("Sellercenter Client Get call. empty response, url: %s\n", getUrl)
-		return nil, err
+		response, err := c.httpClient.Get(getUrl)
+
+		if response == nil || response.StatusCode == 503 {
+			c.logger.Printf("Sellercenter Client Get call. empty response or http 503, url: %s, try: %d \n", getUrl, i)
+		} else {
+			c.logger.Printf("Sellercenter Client Get call. httpResponseCode: %d, url: %s, try: %d \n", response.StatusCode, getUrl, i)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return c.responseBuilder.BuildResponse(*response)
+		}
 	}
 
-	c.logger.Printf("Sellercenter Client Get call. httpResponseCode: %d, url: %s\n", response.StatusCode, getUrl)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return c.responseBuilder.BuildResponse(*response)
+	return nil, err
 }
 
 func (c client) Post(request Request) (Response, error) {
@@ -212,22 +219,27 @@ func (c client) Post(request Request) (Response, error) {
 		return nil, err
 	}
 
-	response, err := c.httpClient.Post(
-		postUrl,
-		"text/xml",
-		bytes.NewBuffer(postDataXml),
-	)
+	for i := 1; i <= maxRetries; i++ {
+		time.Sleep(time.Duration(i-1) * 200 * time.Millisecond)
 
-	if nil == response {
-		c.logger.Printf("Sellercenter Client Post call. empty response, url: %s, data: %s\n", postUrl, string(postDataXml))
-		return nil, err
+		response, err := c.httpClient.Post(
+			postUrl,
+			"text/xml",
+			bytes.NewBuffer(postDataXml),
+		)
+
+		if response == nil || response.StatusCode == 503 {
+			c.logger.Printf("Sellercenter Client Post call. empty response or http 503, url: %s, data: %s, try: %d \n", postUrl, string(postDataXml), i)
+		} else {
+			c.logger.Printf("Sellercenter Client Post call. httpResponseCode: %d, url: %s, data: %s, try: %d \n", response.StatusCode, postUrl, string(postDataXml), i)
+
+			if err != nil {
+				return nil, err
+			}
+
+			return c.responseBuilder.BuildResponse(*response)
+		}
 	}
 
-	c.logger.Printf("Sellercenter Client Post call. httpResponseCode: %d, url: %s, data: %s\n", response.StatusCode, postUrl, string(postDataXml))
-
-	if err != nil {
-		return nil, err
-	}
-
-	return c.responseBuilder.BuildResponse(*response)
+	return nil, err
 }

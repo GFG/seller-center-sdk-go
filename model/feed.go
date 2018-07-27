@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/buger/jsonparser"
+	"strings"
 )
 
 type FeedList struct {
@@ -80,7 +81,11 @@ func (ffrf *FeedFailureReportFile) UnmarshalJSON(b []byte) error {
 		return errors.New("cannot parse FeedFailureReportFile.File")
 	}
 
-	decodedFile, err := base64.StdEncoding.DecodeString(string(rawFile))
+	fileString := string(rawFile)
+
+	fileString = strings.Replace(fileString, "\\", "", -1)
+
+	decodedFile, err := base64.StdEncoding.DecodeString(fileString)
 	if err != nil {
 		return err
 	}
