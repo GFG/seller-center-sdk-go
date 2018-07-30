@@ -205,6 +205,10 @@ func (c client) Get(request Request) (Response, error) {
 		}
 	}
 
+	if err == nil {
+		err = errors.New("empty response")
+	}
+
 	return nil, err
 }
 
@@ -239,6 +243,10 @@ func (c client) Post(request Request) (Response, error) {
 
 			return c.responseBuilder.BuildResponse(*response)
 		}
+	}
+
+	if err == nil {
+		err = errors.New("empty response")
 	}
 
 	return nil, err
