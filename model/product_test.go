@@ -126,30 +126,34 @@ func Test_ProductsMultiple(t *testing.T) {
 }
 
 func Test_Categories(t *testing.T) {
-	j := []byte(`{ "Category": { "Name": "Name 1", "CategoryId": "1", "GlobalIdentifier": "GlobalIdentifier 1", "Children": { "Category": { "Name": "Name 2", "CategoryId": "2", "GlobalIdentifier": "GlobalIdentifier 2", "Children":{ "Category": [{ "Name": "Name 3", "CategoryId": "3", "GlobalIdentifier": "GlobalIdentifier 3", "Children":""},{ "Name": "Name 4", "CategoryId": "4", "GlobalIdentifier": "GlobalIdentifier 4", "Children":""}]} } } } }`)
+	j := []byte(`{"Category":{"Name":"Name 1","CategoryId":"1","GlobalIdentifier":"GlobalIdentifier 1","AttributeSetId":"12","Children":{"Category":{"Name":"Name 2","CategoryId":"2","AttributeSetId":"8","GlobalIdentifier":"GlobalIdentifier 2","Children":{"Category":[{"Name":"Name 3","CategoryId":"3","AttributeSetId":"8","GlobalIdentifier":"GlobalIdentifier 3","Children":""},{"Name":"Name 4","CategoryId":"4","AttributeSetId":"7","GlobalIdentifier":"GlobalIdentifier 4","Children":""}]}}}}}`)
 
 	expected := Categories{[]Category{
 		{
 			"Name 1",
 			ScInt(1),
+			ScInt(12),
 			"GlobalIdentifier 1",
 			Categories{
 				[]Category{
 					{
 						"Name 2",
 						ScInt(2),
+						ScInt(8),
 						"GlobalIdentifier 2",
 						Categories{
 							[]Category{
 								{
 									"Name 3",
 									ScInt(3),
+									ScInt(8),
 									"GlobalIdentifier 3",
 									Categories{nil},
 								},
 								{
 									"Name 4",
 									ScInt(4),
+									ScInt(7),
 									"GlobalIdentifier 4",
 									Categories{nil},
 								},

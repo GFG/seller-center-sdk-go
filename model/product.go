@@ -141,6 +141,7 @@ func (c *Categories) UnmarshalJSON(b []byte) error {
 type Category struct {
 	Name             string     `json:"Name"`
 	CategoryId       ScInt      `json:"CategoryId"`
+	AttributeSetId   ScInt      `json:"AttributeSetId"`
 	GlobalIdentifier string     `json:"GlobalIdentifier"`
 	Children         Categories `json:"Children"`
 }
