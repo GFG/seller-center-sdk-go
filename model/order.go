@@ -129,6 +129,46 @@ type Order struct {
 	Statuses                   Status      `json:"Statuses"`
 }
 
+type OrdersWithItems struct {
+	Orders []OrderWithItems `json:"Orders"`
+}
+
+func (o *OrdersWithItems) UnmarshalJSON(b []byte) error {
+	rawOrders, dataType, _, err := jsonparser.Get(b, "Orders", "Order")
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
+		return err
+	}
+
+	if len(rawOrders) == 0 || dataType == jsonparser.NotExist {
+		return errors.New("cannot find order")
+	}
+
+	var orders []OrderWithItems
+	switch dataType {
+	case jsonparser.Array:
+		if err := json.Unmarshal(rawOrders, &orders); nil != err {
+			return err
+		}
+	case jsonparser.Object:
+		var order OrderWithItems
+		if err := json.Unmarshal(rawOrders, &order); nil != err {
+			return err
+		}
+
+		orders = []OrderWithItems{order}
+	}
+
+	*o = OrdersWithItems{orders}
+
+	return nil
+}
+
+type OrderWithItems struct {
+	OrderId     ScInt                      `json:"OrderId"`
+	OrderNumber string                     `json:"OrderNumber"`
+	OrderItems  OrderItemsInOrderWithItems `json:"OrderItems"`
+}
+
 type OrderItems struct {
 	OrderItems []OrderItem `json:"OrderItems"`
 }
@@ -159,6 +199,40 @@ func (oi *OrderItems) UnmarshalJSON(b []byte) error {
 	}
 
 	*oi = OrderItems{orderItems}
+
+	return nil
+}
+
+type OrderItemsInOrderWithItems struct {
+	Items []OrderItem `json:"OrderItems"`
+}
+
+func (oi *OrderItemsInOrderWithItems) UnmarshalJSON(b []byte) error {
+	rawOrderItems, dataType, _, err := jsonparser.Get(b, "OrderItem")
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
+		return err
+	}
+
+	if len(rawOrderItems) == 0 || dataType == jsonparser.NotExist {
+		return errors.New("cannot find order items")
+	}
+
+	var orderItems []OrderItem
+	switch dataType {
+	case jsonparser.Array:
+		if err := json.Unmarshal(rawOrderItems, &orderItems); nil != err {
+			return err
+		}
+	case jsonparser.Object:
+		var orderItem OrderItem
+		if err := json.Unmarshal(rawOrderItems, &orderItem); nil != err {
+			return err
+		}
+
+		orderItems = []OrderItem{orderItem}
+	}
+
+	*oi = OrderItemsInOrderWithItems{orderItems}
 
 	return nil
 }
