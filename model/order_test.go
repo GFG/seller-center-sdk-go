@@ -197,6 +197,214 @@ func Test_OrdersMultiple(t *testing.T) {
 	}
 }
 
+func Test_OrdersWithItemsSingle(t *testing.T) {
+	j := []byte("{\"Orders\":{\"Order\":{\"OrderId\":\"1\",\"OrderNumber\":\"01\", \"OrderItems\":{ \"OrderItem\": { \"OrderItemId\": \"1\",	\"ShopId\": \"ShopId 1\",	\"OrderId\": \"1\",	\"Name\": \"Name 1\",	\"Sku\": \"Sku 1\",	\"Variation\": \"Variation 1\",	\"ShopSku\": \"ShopSku 1\",	\"ShippingType\": \"Dropshipping 1\",	\"ItemPrice\": \"180.00\",	\"PaidPrice\": \"280.00\",	\"Currency\": \"USD\",	\"WalletCredits\": \"380.00\",	\"TaxAmount\": \"18.32\",	\"CodCollectableAmount\": \"19.32\",	\"ShippingAmount\": \"20.32\",	\"ShippingServiceCost\": \"21.32\",	\"VoucherAmount\": \"22.32\",	\"VoucherCode\": \"VoucherCode 1\",	\"Status\": \"shipped\",	\"IsProcessable\": \"1\",	\"ShipmentProvider\": \"DHL\",	\"IsDigital\": \"0\",	\"DigitalDeliveryInfo\": \"DigitalDeliveryInfo 1\",	\"TrackingCode\": \"TrackingCode 1\",	\"TrackingCodePre\": \"TrackingCodePre 1\",	\"Reason\": \"Reason 1\",	\"ReasonDetail\": \"ReasonDetail 1\",	\"PurchaseOrderId\": \"1\",	\"PurchaseOrderNumber\": \"PurchaseOrderNumber 1\",	\"PackageId\": \"PackageId 1\",	\"PromisedShippingTime\": \"2015-11-04 10:30:57\",	\"ExtraAttributes\": \"ExtraAttributes 1\",	\"ShippingProviderType\": \"ShippingProviderType 1\",	\"CreatedAt\": \"2015-11-05 10:30:57\",	\"UpdatedAt\": \"2015-11-06 10:30:57\",	\"ReturnStatus\": \"ReturnStatus 1\"} } } } }")
+
+	expected := OrdersWithItems{[]OrderWithItems{
+		{
+			ScInt(1),
+			"01",
+			OrderItemsInOrderWithItems{
+				[]OrderItem{
+					{
+						ScInt(1),
+						"ShopId 1",
+						ScInt(1),
+						"Name 1",
+						"Sku 1",
+						"Variation 1",
+						"ShopSku 1",
+						"Dropshipping 1",
+						ScFloat(180.00),
+						ScFloat(280.00),
+						"USD",
+						ScFloat(380.00),
+						ScFloat(18.32),
+						ScFloat(19.32),
+						ScFloat(20.32),
+						ScFloat(21.32),
+						ScFloat(22.32),
+						"VoucherCode 1",
+						"shipped",
+						ScBool(true),
+						"DHL",
+						ScBool(false),
+						"DigitalDeliveryInfo 1",
+						"TrackingCode 1",
+						"TrackingCodePre 1",
+						"Reason 1",
+						"ReasonDetail 1",
+						ScInt(1),
+						"PurchaseOrderNumber 1",
+						"PackageId 1",
+						ScTimestamp(time.Date(2015, 11, 4, 10, 30, 57, 00, time.UTC)),
+						"ExtraAttributes 1",
+						"ShippingProviderType 1",
+						ScTimestamp(time.Date(2015, 11, 5, 10, 30, 57, 00, time.UTC)),
+						ScTimestamp(time.Date(2015, 11, 6, 10, 30, 57, 00, time.UTC)),
+						"ReturnStatus 1",
+					},
+				},
+			},
+		},
+	},
+	}
+
+	var c OrdersWithItems
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected:`%v` - error:`%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c)
+	}
+}
+
+func Test_OrdersWithItemsMultiple(t *testing.T) {
+	j := []byte("{\"Orders\":{\"Order\":[ {\"OrderId\":\"1\",\"OrderNumber\":\"01\", \"OrderItems\":{ \"OrderItem\": { \"OrderItemId\": \"1\", \"ShopId\": \"ShopId 1\", \"OrderId\": \"1\", \"Name\": \"Name 1\", \"Sku\": \"Sku 1\", \"Variation\": \"Variation 1\", \"ShopSku\": \"ShopSku 1\", \"ShippingType\": \"Dropshipping 1\", \"ItemPrice\": \"180.00\", \"PaidPrice\": \"280.00\", \"Currency\": \"USD\", \"WalletCredits\": \"380.00\", \"TaxAmount\": \"18.32\", \"CodCollectableAmount\": \"19.32\", \"ShippingAmount\": \"20.32\", \"ShippingServiceCost\": \"21.32\", \"VoucherAmount\": \"22.32\", \"VoucherCode\": \"VoucherCode 1\", \"Status\": \"shipped\", \"IsProcessable\": \"0\", \"ShipmentProvider\": \"DHL 1\", \"IsDigital\": \"1\", \"DigitalDeliveryInfo\": \"DigitalDeliveryInfo 1\", \"TrackingCode\": \"TrackingCode 1\", \"TrackingCodePre\": \"TrackingCodePre 1\", \"Reason\": \"Reason 1\", \"ReasonDetail\": \"ReasonDetail 1\", \"PurchaseOrderId\": \"1\", \"PurchaseOrderNumber\": \"PurchaseOrderNumber 1\", \"PackageId\": \"PackageId 1\", \"PromisedShippingTime\": \"2015-11-04 10:30:57\", \"ExtraAttributes\": \"ExtraAttributes 1\", \"ShippingProviderType\": \"ShippingProviderType 1\", \"CreatedAt\": \"2015-11-05 10:30:57\", \"UpdatedAt\": \"2015-11-06 10:30:57\", \"ReturnStatus\": \"ReturnStatus 1\"} } }, {\"OrderId\":\"2\",\"OrderNumber\":\"02\", \"OrderItems\":{ \"OrderItem\": [{ \"OrderItemId\": \"2\", \"ShopId\": \"ShopId 2-1\", \"OrderId\": \"2\", \"Name\": \"Name 2-1\", \"Sku\": \"Sku 2-1\", \"Variation\": \"Variation 2-1\", \"ShopSku\": \"ShopSku 2-1\", \"ShippingType\": \"Dropshipping 2-1\", \"ItemPrice\": \"21180.00\", \"PaidPrice\": \"21280.00\", \"Currency\": \"EUR\", \"WalletCredits\": \"21380.00\", \"TaxAmount\": \"2118.32\", \"CodCollectableAmount\": \"2119.32\", \"ShippingAmount\": \"2120.32\", \"ShippingServiceCost\": \"2121.32\", \"VoucherAmount\": \"2122.32\", \"VoucherCode\": \"VoucherCode 2-1\", \"Status\": \"returned\", \"IsProcessable\": \"1\", \"ShipmentProvider\": \"DHL 2-1\", \"IsDigital\": \"0\", \"DigitalDeliveryInfo\": \"DigitalDeliveryInfo 2-1\", \"TrackingCode\": \"TrackingCode 2-1\", \"TrackingCodePre\": \"TrackingCodePre 2-1\", \"Reason\": \"Reason 2-1\", \"ReasonDetail\": \"ReasonDetail 2-1\", \"PurchaseOrderId\": \"2\", \"PurchaseOrderNumber\": \"PurchaseOrderNumber 2-1\", \"PackageId\": \"PackageId 2-1\", \"PromisedShippingTime\": \"2016-11-04 10:30:57\", \"ExtraAttributes\": \"ExtraAttributes 2-1\", \"ShippingProviderType\": \"ShippingProviderType 2-1\", \"CreatedAt\": \"2016-11-05 10:30:57\", \"UpdatedAt\": \"2016-11-06 10:30:57\", \"ReturnStatus\": \"ReturnStatus 2-1\"}, { \"OrderItemId\": \"3\", \"ShopId\": \"ShopId 2-2\", \"OrderId\": \"2\", \"Name\": \"Name 2-2\", \"Sku\": \"Sku 2-2\", \"Variation\": \"Variation 2-2\", \"ShopSku\": \"ShopSku 2-2\", \"ShippingType\": \"Dropshipping 2-2\", \"ItemPrice\": \"22180.00\", \"PaidPrice\": \"22280.00\", \"Currency\": \"KRW\", \"WalletCredits\": \"22380.00\", \"TaxAmount\": \"2218.32\", \"CodCollectableAmount\": \"2219.32\", \"ShippingAmount\": \"2220.32\", \"ShippingServiceCost\": \"2221.32\", \"VoucherAmount\": \"2222.32\", \"VoucherCode\": \"VoucherCode 2-2\", \"Status\": \"canceled\", \"IsProcessable\": \"0\", \"ShipmentProvider\": \"DHL 2-2\", \"IsDigital\": \"1\", \"DigitalDeliveryInfo\": \"DigitalDeliveryInfo 2-2\", \"TrackingCode\": \"TrackingCode 2-2\", \"TrackingCodePre\": \"TrackingCodePre 2-2\", \"Reason\": \"Reason 2-2\", \"ReasonDetail\": \"ReasonDetail 2-2\", \"PurchaseOrderId\": \"3\", \"PurchaseOrderNumber\": \"PurchaseOrderNumber 2-2\", \"PackageId\": \"PackageId 2-2\", \"PromisedShippingTime\": \"2017-11-04 10:30:57\", \"ExtraAttributes\": \"ExtraAttributes 2-2\", \"ShippingProviderType\": \"ShippingProviderType 2-2\", \"CreatedAt\": \"2017-11-05 10:30:57\", \"UpdatedAt\": \"2017-11-06 10:30:57\", \"ReturnStatus\": \"ReturnStatus 2-2\"} ] } } ] } }")
+
+	expected := OrdersWithItems{[]OrderWithItems{
+		{
+			ScInt(1),
+			"01",
+			OrderItemsInOrderWithItems{
+				[]OrderItem{
+					{
+						ScInt(1),
+						"ShopId 1",
+						ScInt(1),
+						"Name 1",
+						"Sku 1",
+						"Variation 1",
+						"ShopSku 1",
+						"Dropshipping 1",
+						ScFloat(180.00),
+						ScFloat(280.00),
+						"USD",
+						ScFloat(380.00),
+						ScFloat(18.32),
+						ScFloat(19.32),
+						ScFloat(20.32),
+						ScFloat(21.32),
+						ScFloat(22.32),
+						"VoucherCode 1",
+						"shipped",
+						ScBool(false),
+						"DHL 1",
+						ScBool(true),
+						"DigitalDeliveryInfo 1",
+						"TrackingCode 1",
+						"TrackingCodePre 1",
+						"Reason 1",
+						"ReasonDetail 1",
+						ScInt(1),
+						"PurchaseOrderNumber 1",
+						"PackageId 1",
+						ScTimestamp(time.Date(2015, 11, 4, 10, 30, 57, 00, time.UTC)),
+						"ExtraAttributes 1",
+						"ShippingProviderType 1",
+						ScTimestamp(time.Date(2015, 11, 5, 10, 30, 57, 00, time.UTC)),
+						ScTimestamp(time.Date(2015, 11, 6, 10, 30, 57, 00, time.UTC)),
+						"ReturnStatus 1",
+					},
+				},
+			},
+		}, {
+			ScInt(2),
+			"02",
+			OrderItemsInOrderWithItems{
+				[]OrderItem{
+					{
+						ScInt(2),
+						"ShopId 2-1",
+						ScInt(2),
+						"Name 2-1",
+						"Sku 2-1",
+						"Variation 2-1",
+						"ShopSku 2-1",
+						"Dropshipping 2-1",
+						ScFloat(21180.00),
+						ScFloat(21280.00),
+						"EUR",
+						ScFloat(21380.00),
+						ScFloat(2118.32),
+						ScFloat(2119.32),
+						ScFloat(2120.32),
+						ScFloat(2121.32),
+						ScFloat(2122.32),
+						"VoucherCode 2-1",
+						"returned",
+						ScBool(true),
+						"DHL 2-1",
+						ScBool(false),
+						"DigitalDeliveryInfo 2-1",
+						"TrackingCode 2-1",
+						"TrackingCodePre 2-1",
+						"Reason 2-1",
+						"ReasonDetail 2-1",
+						ScInt(2),
+						"PurchaseOrderNumber 2-1",
+						"PackageId 2-1",
+						ScTimestamp(time.Date(2016, 11, 4, 10, 30, 57, 00, time.UTC)),
+						"ExtraAttributes 2-1",
+						"ShippingProviderType 2-1",
+						ScTimestamp(time.Date(2016, 11, 5, 10, 30, 57, 00, time.UTC)),
+						ScTimestamp(time.Date(2016, 11, 6, 10, 30, 57, 00, time.UTC)),
+						"ReturnStatus 2-1",
+					}, {
+						ScInt(3),
+						"ShopId 2-2",
+						ScInt(2),
+						"Name 2-2",
+						"Sku 2-2",
+						"Variation 2-2",
+						"ShopSku 2-2",
+						"Dropshipping 2-2",
+						ScFloat(22180.00),
+						ScFloat(22280.00),
+						"KRW",
+						ScFloat(22380.00),
+						ScFloat(2218.32),
+						ScFloat(2219.32),
+						ScFloat(2220.32),
+						ScFloat(2221.32),
+						ScFloat(2222.32),
+						"VoucherCode 2-2",
+						"canceled",
+						ScBool(false),
+						"DHL 2-2",
+						ScBool(true),
+						"DigitalDeliveryInfo 2-2",
+						"TrackingCode 2-2",
+						"TrackingCodePre 2-2",
+						"Reason 2-2",
+						"ReasonDetail 2-2",
+						ScInt(3),
+						"PurchaseOrderNumber 2-2",
+						"PackageId 2-2",
+						ScTimestamp(time.Date(2017, 11, 4, 10, 30, 57, 00, time.UTC)),
+						"ExtraAttributes 2-2",
+						"ShippingProviderType 2-2",
+						ScTimestamp(time.Date(2017, 11, 5, 10, 30, 57, 00, time.UTC)),
+						ScTimestamp(time.Date(2017, 11, 6, 10, 30, 57, 00, time.UTC)),
+						"ReturnStatus 2-2",
+					},
+				},
+			},
+		},
+	},
+	}
+
+	var c OrdersWithItems
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected:`%v` - error:`%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c)
+	}
+}
+
 func Test_OrderItemsSingle(t *testing.T) {
 	j := []byte("{ \"OrderItems\":{ \"OrderItem\": {	\"OrderItemId\": \"1\",	\"ShopId\": \"ShopId 1\",	\"OrderId\": \"1\",	\"Name\": \"Name 1\",	\"Sku\": \"Sku 1\",	\"Variation\": \"Variation 1\",	\"ShopSku\": \"ShopSku 1\",	\"ShippingType\": \"Dropshipping 1\",	\"ItemPrice\": \"180.00\",	\"PaidPrice\": \"280.00\",	\"Currency\": \"USD\",	\"WalletCredits\": \"380.00\",	\"TaxAmount\": \"18.32\",	\"CodCollectableAmount\": \"19.32\",	\"ShippingAmount\": \"20.32\",	\"ShippingServiceCost\": \"21.32\",	\"VoucherAmount\": \"22.32\",	\"VoucherCode\": \"VoucherCode 1\",	\"Status\": \"shipped\",	\"IsProcessable\": \"1\",	\"ShipmentProvider\": \"DHL\",	\"IsDigital\": \"0\",	\"DigitalDeliveryInfo\": \"DigitalDeliveryInfo 1\",	\"TrackingCode\": \"TrackingCode 1\",	\"TrackingCodePre\": \"TrackingCodePre 1\",	\"Reason\": \"Reason 1\",	\"ReasonDetail\": \"ReasonDetail 1\",	\"PurchaseOrderId\": \"1\",	\"PurchaseOrderNumber\": \"PurchaseOrderNumber 1\",	\"PackageId\": \"PackageId 1\",	\"PromisedShippingTime\": \"2015-11-04 10:30:57\",	\"ExtraAttributes\": \"ExtraAttributes 1\",	\"ShippingProviderType\": \"ShippingProviderType 1\",	\"CreatedAt\": \"2015-11-05 10:30:57\",	\"UpdatedAt\": \"2015-11-06 10:30:57\",	\"ReturnStatus\": \"ReturnStatus 1\"} } }")
 

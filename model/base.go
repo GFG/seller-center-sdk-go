@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/xml"
+	"fmt"
 	"github.com/buger/jsonparser"
 	"strconv"
 	"strings"
@@ -82,6 +83,10 @@ func (t *ScTimestamp) UnmarshalJSON(b []byte) error {
 	}
 
 	return nil
+}
+
+func (t ScTimestamp) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf("\"%s\"", time.Time(t).Format(time.RFC3339))), nil
 }
 
 type ScStringSlice []string

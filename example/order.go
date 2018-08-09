@@ -82,6 +82,22 @@ func main() {
 		dumpOrderItem(orderItem, logger)
 	}
 
+	orderIds := []int{1, 2}
+	ordersWithItems, err := orderResource.GetMultipleOrderItems(orderIds)
+	if err != nil {
+		logger.Panicln(err)
+	}
+
+	for _, order := range ordersWithItems.Orders {
+		logger.Println("---------")
+		logger.Printf("OrderId: %d\n", order.OrderId)
+		logger.Printf("OrderNumber: %s\n", order.OrderNumber)
+
+		for _, orderItem := range order.OrderItems.Items {
+			dumpOrderItem(orderItem, logger)
+		}
+	}
+
 	orderItemIds := []int{1}
 	document, err := orderResource.GetDocument(orderItemIds, model.DocumentTypeShippingLabel)
 	if err != nil {
