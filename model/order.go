@@ -2,7 +2,6 @@ package model
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/buger/jsonparser"
 )
 
@@ -35,7 +34,8 @@ func (o *Orders) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(rawOrders) == 0 || dataType == jsonparser.NotExist {
-		return errors.New("cannot find order")
+		*o = Orders{[]Order{}}
+		return nil
 	}
 
 	var orders []Order
@@ -140,7 +140,8 @@ func (o *OrdersWithItems) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(rawOrders) == 0 || dataType == jsonparser.NotExist {
-		return errors.New("cannot find order")
+		*o = OrdersWithItems{[]OrderWithItems{}}
+		return nil
 	}
 
 	var orders []OrderWithItems
@@ -164,13 +165,13 @@ func (o *OrdersWithItems) UnmarshalJSON(b []byte) error {
 }
 
 type OrderWithItems struct {
-	OrderId     ScInt                      `json:"OrderId"`
-	OrderNumber string                     `json:"OrderNumber"`
-	OrderItems  OrderItemsInOrderWithItems `json:"OrderItems"`
+	OrderId     ScInt      `json:"OrderId"`
+	OrderNumber string     `json:"OrderNumber"`
+	OrderItems  OrderItems `json:"OrderItems"`
 }
 
 type OrderItems struct {
-	OrderItems []OrderItem `json:"OrderItems"`
+	Items []OrderItem `json:"OrderItems"`
 }
 
 func (oi *OrderItems) UnmarshalJSON(b []byte) error {
@@ -180,7 +181,15 @@ func (oi *OrderItems) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(rawOrderItems) == 0 || dataType == jsonparser.NotExist {
-		return errors.New("cannot find order items")
+		rawOrderItems, dataType, _, err = jsonparser.Get(b, "OrderItem")
+		if err != nil && err != jsonparser.KeyPathNotFoundError {
+			return err
+		}
+
+		if len(rawOrderItems) == 0 || dataType == jsonparser.NotExist {
+			*oi = OrderItems{[]OrderItem{}}
+			return nil
+		}
 	}
 
 	var orderItems []OrderItem
@@ -199,40 +208,6 @@ func (oi *OrderItems) UnmarshalJSON(b []byte) error {
 	}
 
 	*oi = OrderItems{orderItems}
-
-	return nil
-}
-
-type OrderItemsInOrderWithItems struct {
-	Items []OrderItem `json:"OrderItems"`
-}
-
-func (oi *OrderItemsInOrderWithItems) UnmarshalJSON(b []byte) error {
-	rawOrderItems, dataType, _, err := jsonparser.Get(b, "OrderItem")
-	if err != nil && err != jsonparser.KeyPathNotFoundError {
-		return err
-	}
-
-	if len(rawOrderItems) == 0 || dataType == jsonparser.NotExist {
-		return errors.New("cannot find order items")
-	}
-
-	var orderItems []OrderItem
-	switch dataType {
-	case jsonparser.Array:
-		if err := json.Unmarshal(rawOrderItems, &orderItems); nil != err {
-			return err
-		}
-	case jsonparser.Object:
-		var orderItem OrderItem
-		if err := json.Unmarshal(rawOrderItems, &orderItem); nil != err {
-			return err
-		}
-
-		orderItems = []OrderItem{orderItem}
-	}
-
-	*oi = OrderItemsInOrderWithItems{orderItems}
 
 	return nil
 }

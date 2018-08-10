@@ -7,6 +7,21 @@ import (
 	"time"
 )
 
+func Test_ProductsEmpty(t *testing.T) {
+	j := []byte(`{}`)
+
+	expected := Products{[]Product{}}
+
+	var c Products
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected:`%v` - error:`%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c)
+	}
+}
+
 func Test_ProductsSingle(t *testing.T) {
 	j := []byte(`{"Products":{"Product":{"SellerSku":"SellerSku 1","ShopSku":"ShopSku 1","Name":"Name 1","Description":"Description 1","Brand":"Brand 1","TaxClass":"TaxClass 1","Variation":"Variation 1","ParentSku":"ParentSku 1","Quantity":"1","FulfillmentByNonSellable":"1","Available":"1","Price":"10.10","SalePrice":"20.20","SaleStartDate":"2015-11-04 10:30:49","SaleEndDate":"2015-11-05 10:30:49","Status":"active","ProductId":"ProductId 1","Url":"Url 1","MainImage":"MainImage 1","Images":{"Image":"Image 1"},"PrimaryCategory":"PrimaryCategory 1","Categories":"Category 1","ProductData":{"ProductData 1":"ProductData 1"},"BrowseNodes":"BrowseNode 1","ShipmentType":"ShipmentType 1","Condition":"Condition 1"} } }`)
 
@@ -125,6 +140,21 @@ func Test_ProductsMultiple(t *testing.T) {
 	}
 }
 
+func Test_CategoriesEmpty(t *testing.T) {
+	j := []byte(`{}`)
+
+	expected := Categories{[]Category{}}
+
+	var c Categories
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected:`%v` - error:`%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c)
+	}
+}
+
 func Test_Categories(t *testing.T) {
 	j := []byte(`{"Category":{"Name":"Name 1","CategoryId":"1","GlobalIdentifier":"GlobalIdentifier 1","AttributeSetId":"12","Children":{"Category":{"Name":"Name 2","CategoryId":"2","AttributeSetId":"8","GlobalIdentifier":"GlobalIdentifier 2","Children":{"Category":[{"Name":"Name 3","CategoryId":"3","AttributeSetId":"8","GlobalIdentifier":"GlobalIdentifier 3","Children":""},{"Name":"Name 4","CategoryId":"4","AttributeSetId":"7","GlobalIdentifier":"GlobalIdentifier 4","Children":""}]}}}}}`)
 
@@ -148,14 +178,14 @@ func Test_Categories(t *testing.T) {
 									ScInt(3),
 									ScInt(8),
 									"GlobalIdentifier 3",
-									Categories{nil},
+									Categories{[]Category{}},
 								},
 								{
 									"Name 4",
 									ScInt(4),
 									ScInt(7),
 									"GlobalIdentifier 4",
-									Categories{nil},
+									Categories{[]Category{}},
 								},
 							},
 						},
@@ -176,7 +206,22 @@ func Test_Categories(t *testing.T) {
 	}
 }
 
-func TestAttributeOptions(t *testing.T) {
+func Test_AttributeOptionsEmpty(t *testing.T) {
+	j := []byte(`{}`)
+
+	expected := Attributes{}
+
+	var c Attributes
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected:`%v` - error:`%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c) {
+		t.Errorf("unmarshalled doesn't match. expected: `%#v` - unmarshalled: `%#v`.", expected, c)
+	}
+}
+
+func Test_AttributeOptions(t *testing.T) {
 	j := []byte(`{ "Attribute": [{ "Label": "Label 1", "Name": "Name 1", "FeedName": "FeedName 1", "GlobalIdentifier": "GlobalIdentifier 1", "GroupName": "GroupName 1", "IsMandatory": "0", "IsGlobalAttribute": "0", "Description": "Description 1", "ProductType": "config", "InputType": "textfield", "AttributeType": "value", "ExampleValue": "ExampleValue 1", "MaxLength": "255", "Options": "" }, { "Label": "Label 2", "Name": "Name 2", "FeedName": "FeedName 2", "GlobalIdentifier": "GlobalIdentifier 2", "GroupName": "GroupName 2", "IsMandatory": "1", "IsGlobalAttribute": "1", "Description": "Description 2", "ProductType": "config", "InputType": "dropdown", "AttributeType": "option", "ExampleValue": "Options ExampleValue 2", "MaxLength": "0", "Options": {"Option": { "GlobalIdentifier": "Options GlobalIdentifier 2", "Name": "Options ExampleValue 2", "IsDefault": "1" }  } }, { "Label": "Label 3", "Name": "Name 3", "FeedName": "FeedName 3", "GlobalIdentifier": "GlobalIdentifier 3", "GroupName": "GroupName 3", "IsMandatory": "0", "IsGlobalAttribute": "1", "Description": "Description 3", "ProductType": "config", "InputType": "dropdown", "AttributeType": "option", "ExampleValue": "Spring,Summer,Autumn,Winter", "MaxLength": "", "Options": { "Option": [{ "GlobalIdentifier": "Options GlobalIdentifier 3-1", "Name": "Spring", "IsDefault": "0" }, { "GlobalIdentifier": "Options GlobalIdentifier 3-2", "Name": "Summer", "IsDefault": "1" }, { "GlobalIdentifier": "Options GlobalIdentifier 3-3", "Name": "Autumn", "IsDefault": "0" }, { "GlobalIdentifier": "Options GlobalIdentifier 3-4", "Name": "Winter", "IsDefault": "0" } ] } } ] }`)
 
 	expected := Attributes{[]Attribute{
@@ -193,7 +238,7 @@ func TestAttributeOptions(t *testing.T) {
 			"value",
 			"ExampleValue 1",
 			ScInt(255),
-			AttributeOptions(nil),
+			AttributeOptions([]AttributeOption{}),
 		},
 		{
 			"Label 2",

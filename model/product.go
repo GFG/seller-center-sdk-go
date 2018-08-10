@@ -2,7 +2,6 @@ package model
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/buger/jsonparser"
 )
 
@@ -17,7 +16,8 @@ func (p *Products) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(rawProducts) == 0 || dataType == jsonparser.NotExist {
-		return errors.New("cannot find order product")
+		*p = Products{[]Product{}}
+		return nil
 	}
 
 	var products []Product
@@ -53,6 +53,7 @@ func (i *Images) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(raw) == 0 || dataType == jsonparser.NotExist {
+		*i = []string{}
 		return nil
 	}
 
@@ -115,6 +116,7 @@ func (c *Categories) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(raw) == 0 || dataType == jsonparser.NotExist {
+		*c = Categories{[]Category{}}
 		return nil
 	}
 
@@ -189,6 +191,7 @@ func (ao *AttributeOptions) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(raw) == 0 || dataType == jsonparser.NotExist {
+		*ao = []AttributeOption{}
 		return nil
 	}
 

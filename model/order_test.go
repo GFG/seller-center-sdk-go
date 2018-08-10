@@ -7,6 +7,21 @@ import (
 	"time"
 )
 
+func Test_OrdersEmpty(t *testing.T) {
+	j := []byte("{}")
+
+	expected := Orders{[]Order{}}
+
+	var c Orders
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected:`%v` - error:`%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c)
+	}
+}
+
 func Test_OrdersSingle(t *testing.T) {
 	j := []byte("{\"Orders\":{\"Order\":{\"OrderId\":\"1\",\"CustomerFirstName\":\"CustomerFirstName 1\",\"CustomerLastName\":\"CustomerLastName 1\",\"OrderNumber\":\"01\",\"PaymentMethod\":\"CashOnDelivery 1\",\"Remarks\":\"Remarks 1\",\"DeliveryInfo\":\"DeliveryInfo 1\",\"Price\":\"380.00\",\"GiftOption\":\"0\",\"GiftMessage\":\"GiftMessage 1\",\"VoucherCode\":\"VoucherCode 1\",\"CreatedAt\":\"2015-11-04 10:30:49\",\"UpdatedAt\":\"2015-11-05 10:30:49\",\"AddressUpdatedAt\":\"2015-11-06 10:30:49\",\"AddressBilling\":{\"FirstName\":\"FirstName 1\",\"LastName\":\"LastName 1\",\"Phone\":\"00111000\",\"Phone2\":\"00222000\",\"Address1\":\"Address1 1\",\"Address2\":\"Address2 1\",\"Address3\":\"Address3 1\",\"Address4\":\"Address4 1\",\"Address5\":\"Address5 1\",\"CustomerEmail\":\"CustomerEmail 1\",\"City\":\"City 1\",\"Ward\":\"Ward 1\",\"Region\":\"Region 1\",\"PostCode\":\"000001\",\"Country\":\"Country 1\" },\"AddressShipping\":{\"FirstName\":\"FirstName 2\",\"LastName\":\"LastName 2\",\"Phone\":\"00333000\",\"Phone2\":\"00444000\",\"Address1\":\"Address1 2\",\"Address2\":\"Address2 2\",\"Address3\":\"Address3 2\",\"Address4\":\"Address4 2\",\"Address5\":\"Address5 2\",\"CustomerEmail\":\"CustomerEmail 2\",\"City\":\"City 2\",\"Ward\":\"Ward 2\",\"Region\":\"Region 2\",\"PostCode\":\"000002\",\"Country\":\"Country 2\" },\"NationalRegistrationNumber\":\"NationalRegistrationNumber 1\",\"ItemsCount\":\"1\",\"PromisedShippingTime\":\"2015-11-07 10:30:49\",\"ExtraAttributes\":\"ExtraAttributes 1\",\"Statuses\":{\"Status\":[\"ready_to_ship\",\"shipped\"] } } } }")
 
@@ -197,6 +212,21 @@ func Test_OrdersMultiple(t *testing.T) {
 	}
 }
 
+func Test_OrdersWithItemsEmpty(t *testing.T) {
+	j := []byte("{}")
+
+	expected := OrdersWithItems{[]OrderWithItems{}}
+
+	var c OrdersWithItems
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected:`%v` - error:`%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c)
+	}
+}
+
 func Test_OrdersWithItemsSingle(t *testing.T) {
 	j := []byte("{\"Orders\":{\"Order\":{\"OrderId\":\"1\",\"OrderNumber\":\"01\", \"OrderItems\":{ \"OrderItem\": { \"OrderItemId\": \"1\",	\"ShopId\": \"ShopId 1\",	\"OrderId\": \"1\",	\"Name\": \"Name 1\",	\"Sku\": \"Sku 1\",	\"Variation\": \"Variation 1\",	\"ShopSku\": \"ShopSku 1\",	\"ShippingType\": \"Dropshipping 1\",	\"ItemPrice\": \"180.00\",	\"PaidPrice\": \"280.00\",	\"Currency\": \"USD\",	\"WalletCredits\": \"380.00\",	\"TaxAmount\": \"18.32\",	\"CodCollectableAmount\": \"19.32\",	\"ShippingAmount\": \"20.32\",	\"ShippingServiceCost\": \"21.32\",	\"VoucherAmount\": \"22.32\",	\"VoucherCode\": \"VoucherCode 1\",	\"Status\": \"shipped\",	\"IsProcessable\": \"1\",	\"ShipmentProvider\": \"DHL\",	\"IsDigital\": \"0\",	\"DigitalDeliveryInfo\": \"DigitalDeliveryInfo 1\",	\"TrackingCode\": \"TrackingCode 1\",	\"TrackingCodePre\": \"TrackingCodePre 1\",	\"Reason\": \"Reason 1\",	\"ReasonDetail\": \"ReasonDetail 1\",	\"PurchaseOrderId\": \"1\",	\"PurchaseOrderNumber\": \"PurchaseOrderNumber 1\",	\"PackageId\": \"PackageId 1\",	\"PromisedShippingTime\": \"2015-11-04 10:30:57\",	\"ExtraAttributes\": \"ExtraAttributes 1\",	\"ShippingProviderType\": \"ShippingProviderType 1\",	\"CreatedAt\": \"2015-11-05 10:30:57\",	\"UpdatedAt\": \"2015-11-06 10:30:57\",	\"ReturnStatus\": \"ReturnStatus 1\"} } } } }")
 
@@ -204,7 +234,7 @@ func Test_OrdersWithItemsSingle(t *testing.T) {
 		{
 			ScInt(1),
 			"01",
-			OrderItemsInOrderWithItems{
+			OrderItems{
 				[]OrderItem{
 					{
 						ScInt(1),
@@ -267,7 +297,7 @@ func Test_OrdersWithItemsMultiple(t *testing.T) {
 		{
 			ScInt(1),
 			"01",
-			OrderItemsInOrderWithItems{
+			OrderItems{
 				[]OrderItem{
 					{
 						ScInt(1),
@@ -312,7 +342,7 @@ func Test_OrdersWithItemsMultiple(t *testing.T) {
 		}, {
 			ScInt(2),
 			"02",
-			OrderItemsInOrderWithItems{
+			OrderItems{
 				[]OrderItem{
 					{
 						ScInt(2),
@@ -396,6 +426,20 @@ func Test_OrdersWithItemsMultiple(t *testing.T) {
 	}
 
 	var c OrdersWithItems
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected:`%v` - error:`%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c)
+	}
+}
+func Test_OrderItemsEmpty(t *testing.T) {
+	j := []byte("{}")
+
+	expected := OrderItems{[]OrderItem{}}
+
+	var c OrderItems
 	if err := json.Unmarshal(j, &c); nil != err {
 		t.Fatalf("can not unmarshal. expected:`%v` - error:`%s`.", expected, err)
 	}

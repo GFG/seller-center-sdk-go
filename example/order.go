@@ -78,7 +78,7 @@ func main() {
 		logger.Panicln(err)
 	}
 
-	for _, orderItem := range orderItems.OrderItems {
+	for _, orderItem := range orderItems.Items {
 		dumpOrderItem(orderItem, logger)
 	}
 

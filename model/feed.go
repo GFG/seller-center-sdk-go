@@ -19,7 +19,8 @@ func (fl *FeedList) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(rawFeeds) == 0 || dataType == jsonparser.NotExist {
-		return errors.New("cannot find feeds")
+		*fl = FeedList{[]Feed{}}
+		return nil
 	}
 
 	var feeds []Feed
@@ -127,6 +128,7 @@ func (fe *FeedErrors) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(raw) == 0 || dataType == jsonparser.NotExist {
+		*fe = FeedErrors{[]FeedError{}}
 		return nil
 	}
 
@@ -173,6 +175,7 @@ func (fw *FeedWarnings) UnmarshalJSON(b []byte) error {
 	}
 
 	if len(raw) == 0 || dataType == jsonparser.NotExist {
+		*fw = FeedWarnings{[]FeedWarning{}}
 		return nil
 	}
 
