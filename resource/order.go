@@ -72,7 +72,7 @@ func (or OrderResource) GetOrders(params GetOrdersParams) (model.Orders, error) 
 	}
 
 	if response.IsError() {
-		errorResponse, _ := response.(*client.ErrorResponse)
+		errorResponse, _ := response.(client.ErrorResponse)
 
 		return model.Orders{}, newApiResponseError(errorResponse.HeadObject)
 	}
@@ -98,7 +98,7 @@ func (or OrderResource) GetOrder(orderId int) (model.Order, error) {
 	}
 
 	if response.IsError() {
-		errorResponse, _ := response.(*client.ErrorResponse)
+		errorResponse, _ := response.(client.ErrorResponse)
 
 		return model.Order{}, newApiResponseError(errorResponse.HeadObject)
 	}
@@ -129,7 +129,7 @@ func (or OrderResource) GetOrderItems(orderId int) (model.OrderItems, error) {
 	}
 
 	if response.IsError() {
-		errorResponse, _ := response.(*client.ErrorResponse)
+		errorResponse, _ := response.(client.ErrorResponse)
 
 		return model.OrderItems{}, newApiResponseError(errorResponse.HeadObject)
 	}
@@ -157,7 +157,7 @@ func (or OrderResource) GetMultipleOrderItems(orderIds []int) (model.OrdersWithI
 	}
 
 	if response.IsError() {
-		errorResponse, _ := response.(*client.ErrorResponse)
+		errorResponse, _ := response.(client.ErrorResponse)
 
 		return model.OrdersWithItems{}, newApiResponseError(errorResponse.HeadObject)
 	}
@@ -186,7 +186,7 @@ func (or OrderResource) GetDocument(orderItemIds []int, documentType model.Docum
 	}
 
 	if response.IsError() {
-		errorResponse, _ := response.(*client.ErrorResponse)
+		errorResponse, _ := response.(client.ErrorResponse)
 
 		return model.Document{}, newApiResponseError(errorResponse.HeadObject)
 	}
@@ -226,7 +226,7 @@ func (or OrderResource) SetStatusToCanceled(orderItemId int, reason string, reas
 	}
 
 	if response.IsError() {
-		errorResponse, _ := response.(*client.ErrorResponse)
+		errorResponse, _ := response.(client.ErrorResponse)
 
 		return false, newApiResponseError(errorResponse.HeadObject)
 	}
@@ -249,7 +249,7 @@ func (or OrderResource) SetStatusToPackedByMarketplace(orderItemIds []int, deliv
 	}
 
 	if response.IsError() {
-		errorResponse, _ := response.(*client.ErrorResponse)
+		errorResponse, _ := response.(client.ErrorResponse)
 
 		return false, newApiResponseError(errorResponse.HeadObject)
 	}
@@ -273,7 +273,7 @@ func (or OrderResource) SetStatusToReadyToShip(orderItemIds []int, deliveryType 
 	}
 
 	if response.IsError() {
-		errorResponse, _ := response.(*client.ErrorResponse)
+		errorResponse, _ := response.(client.ErrorResponse)
 
 		return false, newApiResponseError(errorResponse.HeadObject)
 	}
