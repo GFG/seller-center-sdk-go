@@ -121,7 +121,7 @@ func (rb responseBuilder) handleErrorResponse(responseBodyBytes []byte) (Respons
 		return nil, err
 	}
 
-	var errorResponse *ErrorResponse
+	var errorResponse ErrorResponse
 	err = json.Unmarshal(errorResponseData, &errorResponse)
 	if err != nil {
 		return nil, err
@@ -152,7 +152,7 @@ func (rb responseBuilder) handleSuccessResponse(responseBodyBytes []byte) (Respo
 		return nil, err
 	}
 
-	var successResponseHead *headSuccessResponse
+	var successResponseHead headSuccessResponse
 	err = json.Unmarshal(successResponseHeadData, &successResponseHead)
 	if err != nil {
 		return nil, err
@@ -164,8 +164,8 @@ func (rb responseBuilder) handleSuccessResponse(responseBodyBytes []byte) (Respo
 		return nil, err
 	}
 
-	successResponse := &SuccessResponse{
-		HeadObject: *successResponseHead,
+	successResponse := SuccessResponse{
+		HeadObject: successResponseHead,
 		Head:       successResponseHeadData,
 		Body:       successResponseBodyData,
 	}
