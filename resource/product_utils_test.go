@@ -38,7 +38,7 @@ func TestProductBuilder(t *testing.T) {
 
 	productResource := NewProduct(scClient)
 
-	productBuilder := *productResource.InitProduct().
+	productBuilder := productResource.InitProduct().
 		WithName("Name"). // Automatic CDATA encapsulation
 		WithSellerSku("Seller Sku").
 		WithParentSku("Parent Sku").
