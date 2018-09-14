@@ -18,184 +18,209 @@ type ProductBuilder struct {
 	product productEntry
 }
 
-func (pb ProductBuilder) WithSellerSku(sellerSku string) ProductBuilder {
-	c := pb
-	c.product.SellerSku = &sellerSku
+func (pb *ProductBuilder) WithSellerSku(sellerSku string) *ProductBuilder {
+	product := pb.product
+	product.SellerSku = &sellerSku
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithParentSku(parentSku string) ProductBuilder {
-	c := pb
-	c.product.ParentSku = &parentSku
+func (pb *ProductBuilder) WithParentSku(parentSku string) *ProductBuilder {
+	product := pb.product
+	product.ParentSku = &parentSku
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithStatus(status string) ProductBuilder {
-	c := pb
-	c.product.Status = &status
+func (pb *ProductBuilder) WithStatus(status string) *ProductBuilder {
+	product := pb.product
+	product.Status = &status
+	pb.product = product
 
-	return c
+	return pb
 }
-func (pb ProductBuilder) WithName(name string) ProductBuilder {
+
+func (pb *ProductBuilder) WithName(name string) *ProductBuilder {
 	cdName := model.CharData(name)
-	c := pb
-	c.product.Name = &cdName
+	product := pb.product
+	product.Name = &cdName
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithVariation(variation string) ProductBuilder {
-	c := pb
-	c.product.Variation = &variation
+func (pb *ProductBuilder) WithVariation(variation string) *ProductBuilder {
+	product := pb.product
+	product.Variation = &variation
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithPrimaryCategory(primaryCategory int) ProductBuilder {
-	c := pb
-	c.product.PrimaryCategory = &primaryCategory
+func (pb *ProductBuilder) WithPrimaryCategory(primaryCategory int) *ProductBuilder {
+	product := pb.product
+	product.PrimaryCategory = &primaryCategory
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithCategories(categories []int) ProductBuilder {
+func (pb *ProductBuilder) WithCategories(categories []int) *ProductBuilder {
 	isCategories := model.IntSlice(categories)
-	c := pb
-	c.product.Categories = &isCategories
+	product := pb.product
+	product.Categories = &isCategories
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithBrowseNodes(browseNodes []int) ProductBuilder {
+func (pb *ProductBuilder) WithBrowseNodes(browseNodes []int) *ProductBuilder {
 	isBrowseNodes := model.IntSlice(browseNodes)
-	c := pb
-	c.product.BrowseNodes = &isBrowseNodes
+	product := pb.product
+	product.BrowseNodes = &isBrowseNodes
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithDescription(description string) ProductBuilder {
+func (pb *ProductBuilder) WithDescription(description string) *ProductBuilder {
 	cdDescription := model.CharData(description)
-	c := pb
-	c.product.Description = &cdDescription
+	product := pb.product
+	product.Description = &cdDescription
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithBrand(brand string) ProductBuilder {
-	c := pb
-	c.product.Brand = &brand
+func (pb *ProductBuilder) WithBrand(brand string) *ProductBuilder {
+	product := pb.product
+	product.Brand = &brand
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithPrice(price float64) ProductBuilder {
-	c := pb
-	c.product.Price = &price
+func (pb *ProductBuilder) WithPrice(price float64) *ProductBuilder {
+	product := pb.product
+	product.Price = &price
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithSalePrice(salePrice float64) ProductBuilder {
-	c := pb
-	c.product.SalePrice = &salePrice
+func (pb *ProductBuilder) WithSalePrice(salePrice float64) *ProductBuilder {
+	product := pb.product
+	product.SalePrice = &salePrice
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithSaleStartDate(saleStartDate time.Time) ProductBuilder {
+func (pb *ProductBuilder) WithSaleStartDate(saleStartDate time.Time) *ProductBuilder {
 	t := saleDate(saleStartDate)
-	c := pb
-	c.product.SaleStartDate = &t
+	product := pb.product
+	product.SaleStartDate = &t
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithSaleEndDate(saleEndDate time.Time) ProductBuilder {
+func (pb *ProductBuilder) WithSaleEndDate(saleEndDate time.Time) *ProductBuilder {
 	t := saleDate(saleEndDate)
-	c := pb
-	c.product.SaleEndDate = &t
+	product := pb.product
+	product.SaleEndDate = &t
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithTaxClass(taxClass string) ProductBuilder {
-	c := pb
-	c.product.TaxClass = &taxClass
+func (pb *ProductBuilder) WithTaxClass(taxClass string) *ProductBuilder {
+	product := pb.product
+	product.TaxClass = &taxClass
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithShipmentType(shipmentType string) ProductBuilder {
-	c := pb
-	c.product.ShipmentType = &shipmentType
+func (pb *ProductBuilder) WithShipmentType(shipmentType string) *ProductBuilder {
+	product := pb.product
+	product.ShipmentType = &shipmentType
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithProductId(productId string) ProductBuilder {
-	c := pb
-	c.product.ProductId = &productId
+func (pb *ProductBuilder) WithProductId(productId string) *ProductBuilder {
+	product := pb.product
+	product.ProductId = &productId
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithCondition(condition string) ProductBuilder {
-	c := pb
-	c.product.Condition = &condition
+func (pb *ProductBuilder) WithCondition(condition string) *ProductBuilder {
+	product := pb.product
+	product.Condition = &condition
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithProductData(productData productDataEntity) ProductBuilder {
-	c := pb
-	c.product.ProductData = &productData
+func (pb *ProductBuilder) WithProductData(productData productDataEntity) *ProductBuilder {
+	product := pb.product
+	product.ProductData = &productData
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithQuantity(quantity int) ProductBuilder {
-	c := pb
-	c.product.Quantity = &quantity
+func (pb *ProductBuilder) WithQuantity(quantity int) *ProductBuilder {
+	product := pb.product
+	product.Quantity = &quantity
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithMainImage(mainImage string) ProductBuilder {
-	c := pb
-	c.product.MainImage = &mainImage
+func (pb *ProductBuilder) WithMainImage(mainImage string) *ProductBuilder {
+	product := pb.product
+	product.MainImage = &mainImage
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithVolumetricWeight(volumetricWeight float64) ProductBuilder {
-	c := pb
-	c.product.VolumetricWeight = &volumetricWeight
+func (pb *ProductBuilder) WithVolumetricWeight(volumetricWeight float64) *ProductBuilder {
+	product := pb.product
+	product.VolumetricWeight = &volumetricWeight
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithProductGroup(productGroup string) ProductBuilder {
-	c := pb
-	c.product.ProductGroup = &productGroup
+func (pb *ProductBuilder) WithProductGroup(productGroup string) *ProductBuilder {
+	product := pb.product
+	product.ProductGroup = &productGroup
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pb ProductBuilder) WithImage(image string) ProductBuilder {
-	c := pb
-	if c.product.Images == nil {
+func (pb *ProductBuilder) WithImage(image string) *ProductBuilder {
+	product := pb.product
+	if product.Images == nil {
 		images := make([]string, 0)
-		c.product.Images = &productImagesEntries{Image: images}
+		product.Images = &productImagesEntries{Image: images}
 	}
 
-	c.product.Images.Image = append(c.product.Images.Image, image)
+	product.Images.Image = append(product.Images.Image, image)
+	pb.product = product
 
-	return c
+	return pb
 }
 
-func (pr ProductResource) InitProduct() ProductBuilder {
-	return ProductBuilder{product: productEntry{}}
+func (pr ProductResource) InitProduct() *ProductBuilder {
+	return &ProductBuilder{product: productEntry{}}
 }

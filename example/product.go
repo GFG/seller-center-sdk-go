@@ -121,7 +121,7 @@ func main() {
 	sellerSku1 := "Api test product again"
 
 	newProductBuilder := make([]resource.ProductBuilder, 2)
-	newProductBuilder[0] = productResource.InitProduct().
+	newProductBuilder[0] = *productResource.InitProduct().
 		WithName("New Product"). // Automatic CDATA encapsulation
 		WithSellerSku(sellerSku0).
 		WithStatus("active").
@@ -142,7 +142,7 @@ func main() {
 				"PackageType":   `Parcel`,
 			})
 
-	newProductBuilder[1] = productResource.InitProduct().
+	newProductBuilder[1] = *productResource.InitProduct().
 		WithName("New Product Again"). // Automatic CDATA encapsulation
 		WithSellerSku(sellerSku1).
 		WithStatus("active").
@@ -173,7 +173,7 @@ func main() {
 	}
 
 	updateProductBuilder := make([]resource.ProductBuilder, 1)
-	updateProductBuilder[0] = productResource.InitProduct().
+	updateProductBuilder[0] = *productResource.InitProduct().
 		WithSellerSku(sellerSku0).
 		WithName("Updated Product"). // Automatic CDATA encapsulation
 		WithStatus("inactive").
