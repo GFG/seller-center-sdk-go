@@ -4,8 +4,10 @@ import (
 	"encoding/xml"
 	"github.com/GFG/seller-center-sdk-go/client"
 	"github.com/GFG/seller-center-sdk-go/model"
+	"github.com/clbanning/mxj"
 	"io/ioutil"
 	"log"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -68,14 +70,21 @@ func TestProductBuilder(t *testing.T) {
 				"DescriptionEn": model.CharData(`I am a description for the new product again`), // Explicit CDATA encapsulation
 			})
 
-	expected := `<Product><SellerSku>Seller Sku</SellerSku><Name><![CDATA[Name]]></Name><Description><![CDATA[This is a <b>bold</b> product.]]></Description><Brand>Brand</Brand><TaxClass>default</TaxClass><Variation>XXS</Variation><ParentSku>Parent Sku</ParentSku><Quantity>4</Quantity><Price>40</Price><SalePrice>33</SalePrice><SaleStartDate>2015-11-04 10:30:49</SaleStartDate><SaleEndDate>2015-11-09 10:30:49</SaleEndDate><Status>active</Status><ProductId>Product Id</ProductId><VolumetricWeight>10.55</VolumetricWeight><ProductGroup>product group</ProductGroup><MainImage>https://sellerapi.sellercenter.net/image1.jpg</MainImage><Images><Image>https://sellerapi.sellercenter.net/image2.jpg</Image><Image>https://sellerapi.sellercenter.net/image3.jpg</Image></Images><PrimaryCategory>1</PrimaryCategory><Categories>2,3</Categories><ProductData><DescriptionEn><![CDATA[I am a description for the new product again]]></DescriptionEn></ProductData><BrowseNodes>5,6</BrowseNodes><ShipmentType>crossdocking</ShipmentType><Condition>new</Condition></Product>`
+	output, err := xml.MarshalIndent(productBuilder.product, "", "")
 
-	xml, err := xml.MarshalIndent(productBuilder.product, "", "")
+	check, err := mxj.NewMapXml(output)
 	if err != nil {
-		t.Fatalf("can not marshal. expected:`%s` - error:`%s`.", expected, err)
+		t.Fatalf("can not unmarshal check. error:`%s`.", err)
 	}
 
-	if string(xml) != expected {
-		t.Fatalf("marshalled doesn't match. expected: `%s` - marshalled: `%s`.", expected, xml)
+	base := `<Product><SellerSku>Seller Sku</SellerSku><Name><![CDATA[Name]]></Name><Description><![CDATA[This is a <b>bold</b> product.]]></Description><Brand>Brand</Brand><TaxClass>default</TaxClass><Variation>XXS</Variation><ParentSku>Parent Sku</ParentSku><Quantity>4</Quantity><Price>40</Price><SalePrice>33</SalePrice><SaleStartDate>2015-11-04 10:30:49</SaleStartDate><SaleEndDate>2015-11-09 10:30:49</SaleEndDate><Status>active</Status><ProductId>Product Id</ProductId><VolumetricWeight>10.55</VolumetricWeight><ProductGroup>product group</ProductGroup><PrimaryCategory>1</PrimaryCategory><Categories>2,3</Categories><ProductData><MainImage>https://sellerapi.sellercenter.net/image1.jpg</MainImage><Image2>https://sellerapi.sellercenter.net/image2.jpg</Image2><Image3>https://sellerapi.sellercenter.net/image3.jpg</Image3><DescriptionEn><![CDATA[I am a description for the new product again]]></DescriptionEn></ProductData><BrowseNodes>5,6</BrowseNodes><ShipmentType>crossdocking</ShipmentType><Condition>new</Condition></Product>`
+
+	expected, err := mxj.NewMapXml([]byte(base))
+	if err != nil {
+		t.Fatalf("can not unmarshal expected. error:`%s`.", err)
+	}
+
+	if !reflect.DeepEqual(expected, check) {
+		t.Fatalf("marshalled doesn't match. expected: `%#v` - unmarshalled: `%#v`.", expected, check)
 	}
 }

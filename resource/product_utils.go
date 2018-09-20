@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"fmt"
 	"github.com/GFG/seller-center-sdk-go/client"
 	"github.com/GFG/seller-center-sdk-go/model"
 	"time"
@@ -170,7 +171,14 @@ func (pb *ProductBuilder) WithCondition(condition string) *ProductBuilder {
 
 func (pb *ProductBuilder) WithProductData(productData productDataEntity) *ProductBuilder {
 	product := pb.product
-	product.ProductData = &productData
+	if product.ProductData == nil {
+		product.ProductData = &productData
+	} else {
+		for k, data := range productData {
+			(*product.ProductData)[k] = data
+		}
+	}
+
 	pb.product = product
 
 	return pb
@@ -179,14 +187,6 @@ func (pb *ProductBuilder) WithProductData(productData productDataEntity) *Produc
 func (pb *ProductBuilder) WithQuantity(quantity int) *ProductBuilder {
 	product := pb.product
 	product.Quantity = &quantity
-	pb.product = product
-
-	return pb
-}
-
-func (pb *ProductBuilder) WithMainImage(mainImage string) *ProductBuilder {
-	product := pb.product
-	product.MainImage = &mainImage
 	pb.product = product
 
 	return pb
@@ -208,14 +208,41 @@ func (pb *ProductBuilder) WithProductGroup(productGroup string) *ProductBuilder 
 	return pb
 }
 
-func (pb *ProductBuilder) WithImage(image string) *ProductBuilder {
+func (pb *ProductBuilder) WithMainImage(image string) *ProductBuilder {
 	product := pb.product
-	if product.Images == nil {
-		images := make([]string, 0)
-		product.Images = &productImagesEntries{Image: images}
+	if product.ProductData == nil {
+		productData := productDataEntity{}
+		product.ProductData = &productData
 	}
 
-	product.Images.Image = append(product.Images.Image, image)
+	(*product.ProductData)["MainImage"] = image
+
+	pb.product = product
+
+	return pb
+}
+
+func (pb *ProductBuilder) WithImage(image string) *ProductBuilder {
+	product := pb.product
+	if product.images == nil {
+		product.images = make([]string, 0)
+	}
+
+	if len(product.images) < 7 {
+		product.images = append(product.images, image)
+	}
+
+	if product.ProductData == nil {
+		productData := productDataEntity{}
+		product.ProductData = &productData
+	}
+
+	for i, image := range product.images {
+		fieldName := fmt.Sprintf("Image%d", i+2)
+
+		(*product.ProductData)[fieldName] = image
+	}
+
 	pb.product = product
 
 	return pb

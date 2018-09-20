@@ -158,6 +158,12 @@ func main() {
 		WithMainImage("https://sellerapi.sellercenter.net/image1.jpg").
 		WithImage("https://sellerapi.sellercenter.net/image2.jpg").
 		WithImage("https://sellerapi.sellercenter.net/image3.jpg").
+		WithImage("https://sellerapi.sellercenter.net/image4.jpg").
+		WithImage("https://sellerapi.sellercenter.net/image5.jpg").
+		WithImage("https://sellerapi.sellercenter.net/image6.jpg").
+		WithImage("https://sellerapi.sellercenter.net/image7.jpg").
+		WithImage("https://sellerapi.sellercenter.net/image8.jpg").
+		WithImage("https://sellerapi.sellercenter.net/image9.jpg"). // Silently discarded: max images amount: 8
 		WithProductData(
 			map[string]interface{}{
 				"DescriptionEn": model.CharData(`I am a description for the new product again`), // Explicit CDATA encapsulation

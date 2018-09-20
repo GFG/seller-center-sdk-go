@@ -106,31 +106,30 @@ type productImagesEntries struct {
 }
 
 type productEntry struct {
-	XMLName          xml.Name        `xml:"Product"`
-	SellerSku        *string         `xml:"SellerSku"`
-	Name             *model.CharData `xml:"Name"`
-	Description      *model.CharData `xml:"Description"`
-	Brand            *string         `xml:"Brand"`
-	TaxClass         *string         `xml:"TaxClass"`
-	Variation        *string         `xml:"Variation"`
-	ParentSku        *string         `xml:"ParentSku"`
-	Quantity         *int            `xml:"Quantity"`
-	Price            *float64        `xml:"Price"`
-	SalePrice        *float64        `xml:"SalePrice"`
-	SaleStartDate    *saleDate       `xml:"SaleStartDate"`
-	SaleEndDate      *saleDate       `xml:"SaleEndDate"`
-	Status           *string         `xml:"Status"`
-	ProductId        *string         `xml:"ProductId"`
-	VolumetricWeight *float64        `xml:"VolumetricWeight"`
-	ProductGroup     *string         `xml:"ProductGroup"`
-	MainImage        *string         `xml:"MainImage"`
-	Images           *productImagesEntries
+	XMLName          xml.Name           `xml:"Product"`
+	SellerSku        *string            `xml:"SellerSku"`
+	Name             *model.CharData    `xml:"Name"`
+	Description      *model.CharData    `xml:"Description"`
+	Brand            *string            `xml:"Brand"`
+	TaxClass         *string            `xml:"TaxClass"`
+	Variation        *string            `xml:"Variation"`
+	ParentSku        *string            `xml:"ParentSku"`
+	Quantity         *int               `xml:"Quantity"`
+	Price            *float64           `xml:"Price"`
+	SalePrice        *float64           `xml:"SalePrice"`
+	SaleStartDate    *saleDate          `xml:"SaleStartDate"`
+	SaleEndDate      *saleDate          `xml:"SaleEndDate"`
+	Status           *string            `xml:"Status"`
+	ProductId        *string            `xml:"ProductId"`
+	VolumetricWeight *float64           `xml:"VolumetricWeight"`
+	ProductGroup     *string            `xml:"ProductGroup"`
 	PrimaryCategory  *int               `xml:"PrimaryCategory"`
 	Categories       *model.IntSlice    `xml:"Categories"`
 	ProductData      *productDataEntity `xml:"ProductData"`
 	BrowseNodes      *model.IntSlice    `xml:"BrowseNodes"`
 	ShipmentType     *string            `xml:"ShipmentType"`
 	Condition        *string            `xml:"Condition"`
+	images           []string
 }
 
 type productImageXmlBody struct {
