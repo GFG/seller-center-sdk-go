@@ -30,6 +30,12 @@ func (f *ScFloat) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+func (f ScFloat) MarshalJSON() ([]byte, error) {
+	asString := fmt.Sprintf(`"%f"`, f)
+
+	return []byte(asString), nil
+}
+
 type ScBool bool
 
 func (t *ScBool) UnmarshalJSON(b []byte) error {
@@ -41,6 +47,16 @@ func (t *ScBool) UnmarshalJSON(b []byte) error {
 	*t = ScBool("1" == raw)
 
 	return nil
+}
+
+func (t ScBool) MarshalJSON() ([]byte, error) {
+	asString := `"1"`
+
+	if t == false {
+		asString = `"0"`
+	}
+
+	return []byte(asString), nil
 }
 
 type ScInt int
@@ -64,6 +80,12 @@ func (i *ScInt) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+func (i ScInt) MarshalJSON() ([]byte, error) {
+	asString := fmt.Sprintf(`"%d"`, i)
+
+	return []byte(asString), nil
+}
+
 type ScTimestamp time.Time
 
 func (t *ScTimestamp) UnmarshalJSON(b []byte) error {
@@ -76,17 +98,19 @@ func (t *ScTimestamp) UnmarshalJSON(b []byte) error {
 		return nil
 	}
 
-	if w, err := time.Parse(scTimeFormat, string(raw)); err != nil {
-		return err
-	} else {
+	if w, err := time.Parse(scTimeFormat, string(raw)); err == nil {
 		*t = ScTimestamp(w)
+	} else if w, err := time.Parse(time.RFC3339, string(raw)); err == nil {
+		*t = ScTimestamp(w)
+	} else {
+		return err
 	}
 
 	return nil
 }
 
 func (t ScTimestamp) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf("\"%s\"", time.Time(t).Format(time.RFC3339))), nil
+	return []byte(fmt.Sprintf(`"%s"`, time.Time(t).Format(time.RFC3339))), nil
 }
 
 type ScStringSlice []string
@@ -104,6 +128,12 @@ func (s *ScStringSlice) UnmarshalJSON(b []byte) error {
 	*s = ScStringSlice(strings.Split(raw, ","))
 
 	return nil
+}
+
+func (s ScStringSlice) MarshalJSON() ([]byte, error) {
+	asString := fmt.Sprintf(`"%s"`, strings.Join(s, ","))
+
+	return []byte(asString), nil
 }
 
 type CharData string
