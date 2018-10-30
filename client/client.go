@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"compress/gzip"
 	"encoding/xml"
 	"errors"
 	"log"
@@ -226,11 +227,21 @@ func (c client) Post(request Request) (Response, error) {
 	for i := 1; i <= maxRetries; i++ {
 		time.Sleep(time.Duration(i-1) * 200 * time.Millisecond)
 
-		response, err := c.httpClient.Post(
-			postUrl,
-			"text/xml",
-			bytes.NewBuffer(postDataXml),
-		)
+		var buf bytes.Buffer
+		g := gzip.NewWriter(&buf)
+		if _, err = g.Write(postDataXml); err != nil {
+			c.logger.Printf("Sellercenter Client Post call. Error in gzip compression (%s), url: %s, data: %s, try: %d \n", err, postUrl, string(postDataXml), i)
+			return nil, err
+		}
+		if err = g.Close(); err != nil {
+			c.logger.Printf("Sellercenter Client Post call. Error in gzip compression (%s), url: %s, data: %s, try: %d \n", err, postUrl, string(postDataXml), i)
+			return nil, err
+		}
+
+		request, err := http.NewRequest("POST", postUrl, &buf)
+		request.Header.Set("Content-Type", "text/html")
+		request.Header.Set("Content-Encoding", "gzip")
+		response, err := c.httpClient.Do(request)
 
 		if response == nil || response.StatusCode == 503 {
 			c.logger.Printf("Sellercenter Client Post call. empty response or http 503, url: %s, data: %s, try: %d \n", postUrl, string(postDataXml), i)

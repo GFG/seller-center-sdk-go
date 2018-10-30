@@ -20,230 +20,179 @@ type ProductBuilder struct {
 }
 
 func (pb *ProductBuilder) WithSellerSku(sellerSku string) *ProductBuilder {
-	product := pb.product
-	product.SellerSku = &sellerSku
-	pb.product = product
+	pb.product.SellerSku = &sellerSku
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithParentSku(parentSku string) *ProductBuilder {
-	product := pb.product
-	product.ParentSku = &parentSku
-	pb.product = product
+	pb.product.ParentSku = &parentSku
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithStatus(status string) *ProductBuilder {
-	product := pb.product
-	product.Status = &status
-	pb.product = product
+	pb.product.Status = &status
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithName(name string) *ProductBuilder {
 	cdName := model.CharData(name)
-	product := pb.product
-	product.Name = &cdName
-	pb.product = product
+	pb.product.Name = &cdName
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithVariation(variation string) *ProductBuilder {
-	product := pb.product
-	product.Variation = &variation
-	pb.product = product
+	pb.product.Variation = &variation
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithPrimaryCategory(primaryCategory int) *ProductBuilder {
-	product := pb.product
-	product.PrimaryCategory = &primaryCategory
-	pb.product = product
+	pb.product.PrimaryCategory = &primaryCategory
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithCategories(categories []int) *ProductBuilder {
 	isCategories := model.IntSlice(categories)
-	product := pb.product
-	product.Categories = &isCategories
-	pb.product = product
+	pb.product.Categories = &isCategories
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithBrowseNodes(browseNodes []int) *ProductBuilder {
 	isBrowseNodes := model.IntSlice(browseNodes)
-	product := pb.product
-	product.BrowseNodes = &isBrowseNodes
-	pb.product = product
+	pb.product.BrowseNodes = &isBrowseNodes
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithDescription(description string) *ProductBuilder {
 	cdDescription := model.CharData(description)
-	product := pb.product
-	product.Description = &cdDescription
-	pb.product = product
+	pb.product.Description = &cdDescription
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithBrand(brand string) *ProductBuilder {
-	product := pb.product
-	product.Brand = &brand
-	pb.product = product
+	pb.product.Brand = &brand
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithPrice(price float64) *ProductBuilder {
-	product := pb.product
-	product.Price = &price
-	pb.product = product
+	pb.product.Price = &price
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithSalePrice(salePrice float64) *ProductBuilder {
-	product := pb.product
-	product.SalePrice = &salePrice
-	pb.product = product
+	pb.product.SalePrice = &salePrice
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithSaleStartDate(saleStartDate time.Time) *ProductBuilder {
 	t := saleDate(saleStartDate)
-	product := pb.product
-	product.SaleStartDate = &t
-	pb.product = product
+	pb.product.SaleStartDate = &t
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithSaleEndDate(saleEndDate time.Time) *ProductBuilder {
 	t := saleDate(saleEndDate)
-	product := pb.product
-	product.SaleEndDate = &t
-	pb.product = product
+	pb.product.SaleEndDate = &t
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithTaxClass(taxClass string) *ProductBuilder {
-	product := pb.product
-	product.TaxClass = &taxClass
-	pb.product = product
+	pb.product.TaxClass = &taxClass
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithShipmentType(shipmentType string) *ProductBuilder {
-	product := pb.product
-	product.ShipmentType = &shipmentType
-	pb.product = product
+	pb.product.ShipmentType = &shipmentType
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithProductId(productId string) *ProductBuilder {
-	product := pb.product
-	product.ProductId = &productId
-	pb.product = product
+	pb.product.ProductId = &productId
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithCondition(condition string) *ProductBuilder {
-	product := pb.product
-	product.Condition = &condition
-	pb.product = product
+	pb.product.Condition = &condition
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithProductData(productData productDataEntity) *ProductBuilder {
-	product := pb.product
-	if product.ProductData == nil {
-		product.ProductData = &productData
+	if pb.product.ProductData == nil {
+		pb.product.ProductData = &productData
 	} else {
 		for k, data := range productData {
-			(*product.ProductData)[k] = data
+			(*pb.product.ProductData)[k] = data
 		}
 	}
-
-	pb.product = product
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithQuantity(quantity int) *ProductBuilder {
-	product := pb.product
-	product.Quantity = &quantity
-	pb.product = product
+	pb.product.Quantity = &quantity
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithVolumetricWeight(volumetricWeight float64) *ProductBuilder {
-	product := pb.product
-	product.VolumetricWeight = &volumetricWeight
-	pb.product = product
+	pb.product.VolumetricWeight = &volumetricWeight
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithProductGroup(productGroup string) *ProductBuilder {
-	product := pb.product
-	product.ProductGroup = &productGroup
-	pb.product = product
+	pb.product.ProductGroup = &productGroup
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithMainImage(image string) *ProductBuilder {
-	product := pb.product
-	if product.ProductData == nil {
+	if pb.product.ProductData == nil {
 		productData := productDataEntity{}
-		product.ProductData = &productData
+		pb.product.ProductData = &productData
 	}
 
-	(*product.ProductData)["MainImage"] = image
-
-	pb.product = product
+	(*pb.product.ProductData)["MainImage"] = image
 
 	return pb
 }
 
 func (pb *ProductBuilder) WithImage(image string) *ProductBuilder {
-	product := pb.product
-	if product.images == nil {
-		product.images = make([]string, 0)
+	if pb.product.images == nil {
+		pb.product.images = make([]string, 0)
 	}
 
-	if len(product.images) < 7 {
-		product.images = append(product.images, image)
+	if len(pb.product.images) < 7 {
+		pb.product.images = append(pb.product.images, image)
 	}
 
-	if product.ProductData == nil {
+	if pb.product.ProductData == nil {
 		productData := productDataEntity{}
-		product.ProductData = &productData
+		pb.product.ProductData = &productData
 	}
 
-	for i, image := range product.images {
+	for i, image := range pb.product.images {
 		fieldName := fmt.Sprintf("Image%d", i+2)
 
-		(*product.ProductData)[fieldName] = image
+		(*pb.product.ProductData)[fieldName] = image
 	}
-
-	pb.product = product
 
 	return pb
 }
