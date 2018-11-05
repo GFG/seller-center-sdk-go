@@ -140,8 +140,22 @@ func main() {
 		logger.Println("SetStatusToPackedByMarketplace succeeded")
 	}
 
-	reason := "Out of Stock"
-	reasonDetail := "No more invetory"
+	failureReasons, err := orderResource.GetFailureReasons()
+	if err != nil {
+		logger.Panicln(err)
+	}
+	for reasonType, reasons := range failureReasons {
+		logger.Println("---------")
+		logger.Printf("Reason Type: %s\n", reasonType)
+
+		for _, reasonName := range reasons {
+			logger.Printf("	Reason Name: %s\n", reasonName)
+		}
+	}
+
+	reason := failureReasons[model.FailureReasonCanceled][0]
+	reasonDetail := "No more inventory"
+
 	success, err = orderResource.SetStatusToCanceled(1, reason, reasonDetail)
 	if false == success {
 		logger.Printf("SetStatusToCanceled failed: %s\n", err)

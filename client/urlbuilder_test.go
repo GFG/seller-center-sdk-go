@@ -39,7 +39,7 @@ func Test_Can_Build_Url(t *testing.T) {
 
 	url, err := urlBuilder.BuildUrl(requestParams)
 
-	expectedUrl := "https://my-api.sc.net/?Foo=bar&Signature=421768b44097516adfde6f2331e1dd609a3070e9007fe06736aef8f7de55182f&Timestamp=2014-11-12T11%3A45%3A26Z&UserID=abc%40sellercenter.net&Whatever=you+want"
+	expectedUrl := "https://my-api.sc.net/?Foo=bar&Signature=bb6b9ee192fe31f7e21c2fcc6298feccc777b747beb0a062e7c21072671a5cae&Timestamp=2014-11-12T11%3A45%3A26Z&UserID=abc%40sellercenter.net&Whatever=you%20want"
 
 	if url != expectedUrl {
 		t.Fatalf("can not build url. expected: `%s` - build url: `%s`.", expectedUrl, url)

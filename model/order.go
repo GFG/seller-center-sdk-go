@@ -7,6 +7,7 @@ import (
 
 type DeliveryType string
 type DocumentType string
+type FailureReasonType string
 
 const (
 	DeliveryTypeCrossdocking = DeliveryType("send_to_warehouse")
@@ -19,6 +20,11 @@ const (
 	DocumentTypeInvoice         = DocumentType("invoice")
 	DocumentTypeShippingLabel   = DocumentType("shippingLabel")
 	DocumentTypeShippingParcel  = DocumentType("shippingParcel")
+
+	FailureReasonCanceled       = FailureReasonType("canceled")
+	FailureReasonReturned       = FailureReasonType("returned")
+	FailureReasonFailed         = FailureReasonType("failed")
+	FailureReasonReturnRejected = FailureReasonType("return_rejected")
 
 	scTimeFormat = "2006-01-02 15:04:05"
 )
@@ -160,6 +166,46 @@ func (o *OrdersWithItems) UnmarshalJSON(b []byte) error {
 	}
 
 	*o = OrdersWithItems{orders}
+
+	return nil
+}
+
+type FailureReasons struct {
+	Reasons []FailureReason `json:"Reasons"`
+}
+
+type FailureReason struct {
+	Type FailureReasonType `json:"Type"`
+	Name string            `json:"Name"`
+}
+
+func (fr *FailureReasons) UnmarshalJSON(b []byte) error {
+	rawReasons, dataType, _, err := jsonparser.Get(b, "Reasons", "Reason")
+	if err != nil && err != jsonparser.KeyPathNotFoundError {
+		return err
+	}
+
+	if len(rawReasons) == 0 || dataType == jsonparser.NotExist {
+		*fr = FailureReasons{[]FailureReason{}}
+		return nil
+	}
+
+	var reasons []FailureReason
+	switch dataType {
+	case jsonparser.Array:
+		if err := json.Unmarshal(rawReasons, &reasons); nil != err {
+			return err
+		}
+	case jsonparser.Object:
+		var reason FailureReason
+		if err := json.Unmarshal(rawReasons, &reason); nil != err {
+			return err
+		}
+
+		reasons = []FailureReason{reason}
+	}
+
+	*fr = FailureReasons{reasons}
 
 	return nil
 }

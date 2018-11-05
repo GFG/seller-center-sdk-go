@@ -211,6 +211,42 @@ func (or OrderResource) GetDocument(orderItemIds []int, documentType model.Docum
 	return document, nil
 }
 
+func (or OrderResource) GetFailureReasons() (map[model.FailureReasonType][]string, error) {
+	r := client.NewGenericRequest("GetFailureReasons", client.MethodGET)
+	r.SetVersion(client.V1)
+
+	response, err := or.client.Call(r)
+
+	if err != nil {
+		return map[model.FailureReasonType][]string{}, err
+	}
+
+	if response.IsError() {
+		errorResponse, _ := response.(client.ErrorResponse)
+
+		return map[model.FailureReasonType][]string{}, newApiResponseError(errorResponse.HeadObject)
+	}
+
+	rawBody := response.GetBody()
+	var failureReasons model.FailureReasons
+	err = json.Unmarshal(rawBody, &failureReasons)
+	if err != nil {
+		return map[model.FailureReasonType][]string{}, err
+	}
+
+	ret := make(map[model.FailureReasonType][]string)
+	for _, reason := range failureReasons.Reasons {
+		reasonType := model.FailureReasonType(reason.Type)
+		if _, ok := ret[reasonType]; !ok {
+			ret[reasonType] = make([]string, 0)
+		}
+
+		ret[reasonType] = append(ret[reasonType], reason.Name)
+	}
+
+	return ret, nil
+}
+
 func (or OrderResource) SetStatusToCanceled(orderItemId int, reason string, reasonDetail string) (bool, error) {
 	r := client.NewGenericRequest("SetStatusToCanceled", client.MethodPOST)
 	r.SetVersion(client.V1)

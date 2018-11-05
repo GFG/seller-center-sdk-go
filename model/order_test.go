@@ -615,3 +615,51 @@ func Test_Document(t *testing.T) {
 		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c)
 	}
 }
+
+func Test_FailureReasons_Single(t *testing.T) {
+	j := []byte("{ \"Reasons\": { \"Reason\": { \"Name\": \"Product not available\", \"Type\": \"canceled\" } } }")
+
+	expected := FailureReasons{
+		[]FailureReason{
+			{
+				Name: "Product not available",
+				Type: FailureReasonCanceled,
+			},
+		},
+	}
+
+	var c FailureReasons
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected:`%v` - error:`%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c)
+	}
+}
+
+func Test_FailureReasons_Multiple(t *testing.T) {
+	j := []byte("{ \"Reasons\": { \"Reason\": [ { \"Name\": \"Product not available\", \"Type\": \"canceled\" }, { \"Name\": \"Customer refused to receive\", \"Type\": \"failed\" } ] } }")
+
+	expected := FailureReasons{
+		[]FailureReason{
+			{
+				Name: "Product not available",
+				Type: FailureReasonCanceled,
+			},
+			{
+				Name: "Customer refused to receive",
+				Type: FailureReasonFailed,
+			},
+		},
+	}
+
+	var c FailureReasons
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected:`%v` - error:`%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c)
+	}
+}

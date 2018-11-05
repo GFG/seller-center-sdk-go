@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -43,13 +44,13 @@ func (urlBuilder clientUrlBuilder) BuildUrl(requestParams url.Values) (string, e
 
 	requestParams.Add(fieldSignature, signature)
 
-	currentUrl.RawQuery = requestParams.Encode()
+	currentUrl.RawQuery = strings.Replace(requestParams.Encode(), "+", "%20", -1)
 
 	return currentUrl.String(), nil
 }
 
 func (urlBuilder clientUrlBuilder) createSignatureForRequest(params url.Values) string {
-	queryString := params.Encode()
+	queryString := strings.Replace(params.Encode(), "+", "%20", -1)
 	return urlBuilder.hashHmacRequestSignature.sign(queryString)
 }
 
