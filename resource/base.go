@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	saleDateTimeFormat = "2006-01-02 15:04:05"
+	saleDateTimeFormat     = "2006-01-02 15:04:05"
+	apiParamDateTimeFormat = "2006-01-02T15:04:05"
 )
 
 func newApiResponseError(errorHead client.HeadErrorResponse) error {

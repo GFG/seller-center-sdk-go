@@ -138,16 +138,16 @@ func (pr ProductResource) GetProducts(params GetProductsParams) (model.Products,
 	r.SetVersion(client.V1)
 
 	if nil != params.CreatedAfter {
-		r.SetRequestParam("CreatedAfter", params.CreatedAfter.Format(time.RFC3339))
+		r.SetRequestParam("CreatedAfter", params.CreatedAfter.Format(apiParamDateTimeFormat))
 	}
 	if nil != params.CreatedBefore {
-		r.SetRequestParam("CreatedBefore", params.CreatedBefore.Format(time.RFC3339))
+		r.SetRequestParam("CreatedBefore", params.CreatedBefore.Format(apiParamDateTimeFormat))
 	}
 	if nil != params.UpdatedAfter {
-		r.SetRequestParam("UpdatedAfter", params.UpdatedAfter.Format(time.RFC3339))
+		r.SetRequestParam("UpdatedAfter", params.UpdatedAfter.Format(apiParamDateTimeFormat))
 	}
 	if nil != params.UpdatedBefore {
-		r.SetRequestParam("UpdatedBefore", params.UpdatedBefore.Format(time.RFC3339))
+		r.SetRequestParam("UpdatedBefore", params.UpdatedBefore.Format(apiParamDateTimeFormat))
 	}
 	if nil != params.Limit {
 		r.SetRequestParam("Limit", strconv.Itoa(*params.Limit))
