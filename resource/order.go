@@ -317,6 +317,27 @@ func (or OrderResource) SetStatusToReadyToShip(orderItemIds []int, deliveryType 
 	return true, nil
 }
 
+func (or OrderResource) SetStatusToShipped(orderItemId int) (bool, error) {
+	r := client.NewGenericRequest("SetStatusToShipped", client.MethodPOST)
+	r.SetVersion(client.V1)
+
+	r.SetRequestParam("OrderItemId", strconv.Itoa(orderItemId))
+
+	response, err := or.client.Call(r)
+
+	if err != nil {
+		return false, err
+	}
+
+	if response.IsError() {
+		errorResponse, _ := response.(client.ErrorResponse)
+
+		return false, newApiResponseError(errorResponse.HeadObject)
+	}
+
+	return true, nil
+}
+
 func intSliceToParam(a []int) string {
 	if len(a) == 0 {
 		return ""

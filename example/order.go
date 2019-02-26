@@ -133,6 +133,13 @@ func main() {
 		logger.Println("SetStatusToReadyToShip succeeded")
 	}
 
+	success, err = orderResource.SetStatusToShipped(orderItemIds[0])
+	if false == success {
+		logger.Printf("SetStatusToShipped failed: %s\n", err)
+	} else {
+		logger.Println("SetStatusToShipped succeeded")
+	}
+
 	success, err = orderResource.SetStatusToPackedByMarketplace(orderItemIds, model.DeliveryTypeDropshipping, shippingProivder)
 	if false == success {
 		logger.Printf("SetStatusToPackedByMarketplace failed: %s\n", err)
