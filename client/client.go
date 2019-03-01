@@ -172,14 +172,20 @@ func (c client) GetLogger() *log.Logger {
 }
 
 func (c client) Call(request Request) (Response, error) {
+	var resp Response
+	var err error
 	switch request.GetMethod() {
 	case MethodGET:
-		return c.Get(request)
+		resp, err = c.Get(request)
 	case MethodPOST:
-		return c.Post(request)
+		resp, err = c.Post(request)
+	default:
+		resp, err = nil, NotSupportedMethod
 	}
 
-	return nil, NotSupportedMethod
+	c.logger.Printf("Call response: %#v --- Err: %#v", resp, err)
+
+	return resp, err
 }
 
 func (c client) Get(request Request) (Response, error) {
