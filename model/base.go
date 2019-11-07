@@ -113,6 +113,40 @@ func (t ScTimestamp) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, time.Time(t).Format(time.RFC3339))), nil
 }
 
+type ScIntSlice []int
+
+func (i *ScIntSlice) UnmarshalJSON(b []byte) error {
+	var raw, err = jsonparser.GetString(b)
+	if err != nil {
+		return err
+	}
+
+	if len(raw) == 0 {
+		return nil
+	}
+
+	var rawStrings = strings.Split(raw, ",")
+
+	values := make(ScIntSlice, 0)
+	for _, rawString := range rawStrings {
+		if w, err := strconv.Atoi(rawString); err != nil {
+			return err
+		} else {
+			values = append(values, w)
+		}
+	}
+
+	*i = values
+
+	return nil
+}
+
+func (i ScIntSlice) MarshalJSON() ([]byte, error) {
+	asString := strings.Trim(strings.Replace(fmt.Sprint(i), " ", ",", -1), "[]")
+
+	return []byte(fmt.Sprintf(`"%s"`, asString)), nil
+}
+
 type ScStringSlice []string
 
 func (s *ScStringSlice) UnmarshalJSON(b []byte) error {
