@@ -94,7 +94,9 @@ type Product struct {
 	MainImage                string                 `json:"MainImage"`
 	Images                   Images                 `json:"Images"`
 	PrimaryCategory          string                 `json:"PrimaryCategory"`
+	PrimaryCategoryId        ScInt                  `json:"PrimaryCategoryId"`
 	Categories               ScStringSlice          `json:"Categories"`
+	CategoriesIds            ScIntSlice             `json:"CategoriesIds"`
 	ProductData              map[string]interface{} `json:"ProductData"`
 	BrowseNodes              ScStringSlice          `json:"BrowseNodes"`
 	ShipmentType             string                 `json:"ShipmentType"`

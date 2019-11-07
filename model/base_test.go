@@ -267,6 +267,66 @@ func Test_Marshal_ScTimestamp_Empty(t *testing.T) {
 	}
 }
 
+func Test_Unmarshal_ScIntSlice_NotEmpty(t *testing.T) {
+	j := []byte("{\"ScIntSlice\": \"5,12,301\"}")
+
+	type s struct {
+		ScIntSlice ScIntSlice `json:"ScIntSlice"'`
+	}
+
+	expected := ScIntSlice([]int{5, 12, 301})
+
+	var c s
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected: `%v` - error: `%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c.ScIntSlice) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c.ScIntSlice)
+	}
+}
+
+func Test_Marshal_ScIntSlice_NotEmpty(t *testing.T) {
+	j := ScIntSlice([]int{5, 12, 301})
+
+	expected := []byte(`"5,12,301"`)
+	if actual, err := json.Marshal(j); nil != err {
+		t.Fatalf("can not unmarshal. expected: `%s` - error: `%s`.", expected, err)
+	} else if !reflect.DeepEqual(expected, actual) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%s` - unmarshalled: `%s`.", expected, actual)
+	}
+}
+
+func Test_Unmarshal_ScIntSlice_Empty(t *testing.T) {
+	j := []byte("{\"ScIntSlice\": \"\"}")
+
+	type s struct {
+		ScIntSlice ScIntSlice `json:"ScIntSlice"'`
+	}
+
+	expected := ScIntSlice(nil)
+
+	var c s
+	if err := json.Unmarshal(j, &c); nil != err {
+		t.Fatalf("can not unmarshal. expected: `%v` - error: `%s`.", expected, err)
+	}
+
+	if !reflect.DeepEqual(expected, c.ScIntSlice) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%v` - unmarshalled: `%v`.", expected, c.ScIntSlice)
+	}
+}
+
+func Test_Marshal_ScIntSlice_Empty(t *testing.T) {
+	j := ScIntSlice(nil)
+
+	expected := []byte(`""`)
+	if actual, err := json.Marshal(j); nil != err {
+		t.Fatalf("can not unmarshal. expected: `%s` - error: `%s`.", expected, err)
+	} else if !reflect.DeepEqual(expected, actual) {
+		t.Fatalf("unmarshalled doesn't match. expected: `%s` - unmarshalled: `%s`.", expected, actual)
+	}
+}
+
 func Test_Unmarshal_ScStringSlice_NotEmpty(t *testing.T) {
 	j := []byte("{\"ScStringSlice\": \"A,B\"}")
 
